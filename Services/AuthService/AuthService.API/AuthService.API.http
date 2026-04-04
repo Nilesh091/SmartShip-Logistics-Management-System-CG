@@ -1,6 +1,42 @@
-@AuthService.API_HostAddress = http://localhost:5045
+@baseUrl = http://localhost:5000/api/auth
+@contentType = application/json
 
-GET {{AuthService.API_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1️⃣ SIGNUP - Register a new user
+POST {{baseUrl}}/signup
+Content-Type: {{contentType}}
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "SecurePassword123!"
+}
 
 ###
+
+### 2️⃣ LOGIN - Authenticate user
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+  "email": "john@example.com",
+  "password": "SecurePassword123!"
+}
+
+###
+
+### 3️⃣ REFRESH TOKEN - Get new access token
+@refreshToken = YOUR_REFRESH_TOKEN_HERE
+POST {{baseUrl}}/refresh?token={{refreshToken}}
+
+###
+
+### 4️⃣ REVOKE TOKEN - Invalidate a refresh token
+@tokenToRevoke = YOUR_REFRESH_TOKEN_HERE
+POST {{baseUrl}}/revoke?token={{tokenToRevoke}}
+
+###
+
+### Example: Using Bearer Token (use accessToken from login response)
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+GET http://localhost:5000/api/protected
+Authorization: Bearer {{accessToken}}

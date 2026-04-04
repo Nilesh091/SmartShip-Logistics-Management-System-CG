@@ -1,0 +1,16 @@
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.csproj.AssemblyReference.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.AssemblyInfoInputs.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.AssemblyInfo.cs
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.csproj.CoreCompileInputs.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.sourcelink.json
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/bin/Debug/net10.0/AuthService.Application.deps.json
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/bin/Debug/net10.0/AuthService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/bin/Debug/net10.0/AuthService.Application.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/bin/Debug/net10.0/AuthService.Domain.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/bin/Debug/net10.0/AuthService.Domain.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthServ.67992DEE.Up2Date
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/refint/AuthService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/AuthService.Application.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Application/obj/Debug/net10.0/ref/AuthService.Application.dll
