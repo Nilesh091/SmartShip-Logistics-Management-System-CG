@@ -1,17 +1,23 @@
 using ShipmentService.Application.DTOs;
+using ShipmentService.Application.MessagePublishing;
 using ShipmentService.Application.Repositories;
 using ShipmentService.Domain.Entities;
 using ShipmentService.Domain.Enums;
+using ShipmentService.Domain.Events;
 
 namespace ShipmentService.Application.Services;
 
 public class ShipmentService : IShipmentService
 {
   private readonly IShipmentRepository _repository;
+  private readonly IMessagePublisher _messagePublisher;
+  private readonly IMessagePoller? _messagePoller;
 
-  public ShipmentService(IShipmentRepository repository)
+  public ShipmentService(IShipmentRepository repository, IMessagePublisher messagePublisher, IMessagePoller? messagePoller = null)
   {
     _repository = repository;
+    _messagePublisher = messagePublisher;
+    _messagePoller = messagePoller;
   }
 
   public async Task<Guid> CreateShipmentAsync(CreateShipmentDto dto, Guid userId)
@@ -41,7 +47,18 @@ public class ShipmentService : IShipmentService
       Package = package
     };
 
-    return await _repository.AddAsync(shipment);
+    var shipmentId = await _repository.AddAsync(shipment);
+
+    // Publish ShipmentCreatedEvent
+    await _messagePublisher.PublishAsync(new ShipmentCreatedEvent
+    {
+      ShipmentId = shipmentId,
+      UserId = userId,
+      Status = shipment.Status,
+      CreatedAt = DateTime.UtcNow
+    });
+
+    return shipmentId;
   }
 
   public async Task<ShipmentResponseDto?> GetShipmentByIdAsync(Guid id)
@@ -69,7 +86,21 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = ShipmentStatus.Booked;
-    return await _repository.UpdateAsync(shipment);
+    var success = await _repository.UpdateAsync(shipment);
+
+    if (success)
+    {
+      // Publish ShipmentStatusChangedEvent
+      await _messagePublisher.PublishAsync(new ShipmentStatusChangedEvent
+      {
+        ShipmentId = id,
+        Status = ShipmentStatus.Booked,
+        Timestamp = DateTime.UtcNow,
+        UserId = shipment.UserId
+      });
+    }
+
+    return success;
   }
 
   public async Task<bool> UpdateShipmentStatusAsync(Guid id, string status)
@@ -82,7 +113,21 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = status;
-    return await _repository.UpdateAsync(shipment);
+    var success = await _repository.UpdateAsync(shipment);
+
+    if (success)
+    {
+      // Publish ShipmentStatusChangedEvent
+      await _messagePublisher.PublishAsync(new ShipmentStatusChangedEvent
+      {
+        ShipmentId = id,
+        Status = status,
+        Timestamp = DateTime.UtcNow,
+        UserId = shipment.UserId
+      });
+    }
+
+    return success;
   }
 
   public async Task<bool> CancelShipmentAsync(Guid id)
@@ -98,7 +143,60 @@ public class ShipmentService : IShipmentService
     return await _repository.DeleteAsync(id);
   }
 
+  public async Task<ShipmentResponseDto?> ConsumePendingUpdatesAndGetShipmentAsync(Guid shipmentId)
+  {
+    if (_messagePoller == null)
+    {
+      // If no message poller configured, just return current shipment
+      return await GetShipmentByIdAsync(shipmentId);
+    }
+
+    try
+    {
+      // Poll for pending messages for this shipment
+      var pendingEvents = await _messagePoller.PollPendingMessagesAsync(shipmentId);
+
+      // Apply pending updates to database
+      foreach (var @event in pendingEvents)
+      {
+        var shipment = await _repository.GetByIdAsync(shipmentId);
+        if (shipment != null && IsValidStatusTransition(shipment.Status, @event.Status))
+        {
+          shipment.Status = @event.Status;
+          shipment.UpdatedAt = @event.Timestamp;
+          await _repository.UpdateAsync(shipment);
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      // Log error but don't fail - just return current state
+      // In production, you'd use proper logging here
+      Console.WriteLine($"Error consuming pending updates for shipment {shipmentId}: {ex.Message}");
+    }
+
+    // Return updated shipment
+    return await GetShipmentByIdAsync(shipmentId);
+  }
+
+  public async Task<int> GetPendingMessageCountAsync(Guid shipmentId)
+  {
+    if (_messagePoller == null)
+      return 0;
+
+    try
+    {
+      return await _messagePoller.GetPendingMessageCountAsync(shipmentId);
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Error getting pending message count for shipment {shipmentId}: {ex.Message}");
+      return 0;
+    }
+  }
+
   private Address MapToAddress(AddressDto dto)
+
   {
     return new Address
     {

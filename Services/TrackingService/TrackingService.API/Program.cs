@@ -1,41 +1,76 @@
+using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
+using TrackingService.Application.Repositories.Interfaces;
+using TrackingService.Application.Services.Interfaces;
+using TrackingService.Application.Services.Implementations;
+using TrackingService.Infrastructure.Data;
+using TrackingService.Infrastructure.Messaging;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// DB
+builder.Services.AddDbContext<TrackingDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// RabbitMQ
+var rabbitMqHostName = builder.Configuration["RabbitMQ:HostName"] ?? "localhost";
+builder.Services.AddSingleton<IConnectionFactory>(new ConnectionFactory
+{
+    HostName = rabbitMqHostName
+});
+
+// DI
+builder.Services.AddScoped<ITrackingRepository, TrackingRepository>();
+builder.Services.AddScoped<ITrackingService, TrackingService.Application.Services.Implementations.TrackingService>();
+builder.Services.AddSingleton<IRabbitMQProducer, RabbitMQProducer>();
+builder.Services.AddSingleton<RabbitMQConsumer>();
+
+builder.Services.AddControllers();
+
+// Swagger/OpenAPI
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo
+    {
+        Title = "Tracking Service API",
+        Version = "v1",
+        Description = "API for managing shipment tracking and events"
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Tracking Service API v1");
+        options.RoutePrefix = "swagger";
+    });
 }
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+// 🔥 START CONSUMER (IMPROVED LOGGING)
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+try
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var consumer = app.Services.GetRequiredService<RabbitMQConsumer>();
+
+    logger.LogInformation("Starting RabbitMQ Consumer...");
+
+    await consumer.StartAsync(builder.Configuration["RabbitMQ:HostName"] ?? "localhost");
+
+    logger.LogInformation("RabbitMQ Consumer started successfully ✅");
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "Failed to start RabbitMQ Consumer ❌");
+}
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

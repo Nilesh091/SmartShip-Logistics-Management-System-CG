@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShipmentService.Application.Services;
 using ShipmentService.Application.Repositories;
+using ShipmentService.Application.MessagePublishing;
 using ShipmentService.Infrastructure.Persistence;
 using ShipmentService.Infrastructure.Repositories;
+using ShipmentService.Infrastructure.MessagePublishing;
 
 using System.Text;
 
@@ -105,9 +108,40 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Add Message Publishing & Consuming configuration
+var rabbitMQHost = builder.Configuration["RabbitMQ:HostName"] ?? "localhost";
+var queueName = builder.Configuration["RabbitMQ:QueueName"] ?? "shipment-status-changed-event-events";
+
 // Add Application Services
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
+
+// Add Message Polling for GET requests
+builder.Services.AddScoped<IMessagePoller>(sp =>
+    new RabbitMQMessagePoller(
+        rabbitMQHost,
+        queueName,
+        sp.GetRequiredService<ILoggerFactory>().CreateLogger<RabbitMQMessagePoller>()
+    )
+);
+
 builder.Services.AddScoped<IShipmentService, ShipmentService.Application.Services.ShipmentService>();
+
+// Add Message Publishing
+builder.Services.AddScoped<IMessagePublisher>(sp =>
+    new MessagePublisher(rabbitMQHost, sp.GetRequiredService<ILogger<MessagePublisher>>())
+);
+
+// Add Message Consuming (Background Service)
+builder.Services.AddScoped<IMessageConsumer>(sp =>
+    new MessageConsumer(
+        rabbitMQHost,
+        queueName,
+        sp.GetRequiredService<IShipmentRepository>(),
+        sp.GetRequiredService<ILoggerFactory>().CreateLogger<MessageConsumer>()
+    )
+);
+
+builder.Services.AddHostedService<ShipmentService.API.BackgroundServices.ShipmentStatusConsumerBackgroundService>();
 
 // Add Logging
 builder.Services.AddLogging(config =>

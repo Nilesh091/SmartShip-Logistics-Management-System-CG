@@ -1,4 +1,4 @@
-@TrackingService.API_HostAddress = http://localhost:5168
+@TrackingService.API_HostAddress = http://localhost:5062
 
 GET {{TrackingService.API_HostAddress}}/weatherforecast/
 Accept: application/json

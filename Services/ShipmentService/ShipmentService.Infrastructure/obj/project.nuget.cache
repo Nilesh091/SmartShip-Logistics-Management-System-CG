@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "JpMOsWzKsK4=",
+  "dgSpecHash": "or5AKnnIZ8I=",
   "success": true,
   "projectFilePath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Infrastructure/ShipmentService.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -18,12 +18,12 @@
     "/Users/nrs/.nuget/packages/microsoft.extensions.caching.abstractions/10.0.0/microsoft.extensions.caching.abstractions.10.0.0.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.extensions.caching.memory/10.0.0/microsoft.extensions.caching.memory.10.0.0.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.extensions.configuration.abstractions/10.0.0/microsoft.extensions.configuration.abstractions.10.0.0.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.0/microsoft.extensions.dependencyinjection.10.0.0.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.0/microsoft.extensions.dependencyinjection.abstractions.10.0.0.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/microsoft.extensions.logging/10.0.0/microsoft.extensions.logging.10.0.0.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.0/microsoft.extensions.logging.abstractions.10.0.0.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/microsoft.extensions.options/10.0.0/microsoft.extensions.options.10.0.0.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/microsoft.extensions.primitives/10.0.0/microsoft.extensions.primitives.10.0.0.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.5/microsoft.extensions.dependencyinjection.10.0.5.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.5/microsoft.extensions.dependencyinjection.abstractions.10.0.5.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/microsoft.extensions.logging/10.0.5/microsoft.extensions.logging.10.0.5.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/microsoft.extensions.logging.abstractions/10.0.5/microsoft.extensions.logging.abstractions.10.0.5.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/microsoft.extensions.options/10.0.5/microsoft.extensions.options.10.0.5.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/microsoft.extensions.primitives/10.0.5/microsoft.extensions.primitives.10.0.5.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.identity.client/4.73.1/microsoft.identity.client.4.73.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.identity.client.extensions.msal/4.73.1/microsoft.identity.client.extensions.msal.4.73.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.identitymodel.abstractions/7.7.1/microsoft.identitymodel.abstractions.7.7.1.nupkg.sha512",
@@ -33,13 +33,15 @@
     "/Users/nrs/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/7.7.1/microsoft.identitymodel.protocols.openidconnect.7.7.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.identitymodel.tokens/7.7.1/microsoft.identitymodel.tokens.7.7.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.sqlserver.server/1.0.0/microsoft.sqlserver.server.1.0.0.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/rabbitmq.client/7.2.1/rabbitmq.client.7.2.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.clientmodel/1.5.1/system.clientmodel.1.5.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.configuration.configurationmanager/9.0.4/system.configuration.configurationmanager.9.0.4.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.diagnostics.eventlog/9.0.4/system.diagnostics.eventlog.9.0.4.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.identitymodel.tokens.jwt/7.7.1/system.identitymodel.tokens.jwt.7.7.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.memory.data/8.0.1/system.memory.data.8.0.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.security.cryptography.pkcs/9.0.4/system.security.cryptography.pkcs.9.0.4.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/system.security.cryptography.protecteddata/9.0.4/system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
+    "/Users/nrs/.nuget/packages/system.security.cryptography.protecteddata/9.0.4/system.security.cryptography.protecteddata.9.0.4.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/system.threading.ratelimiting/8.0.0/system.threading.ratelimiting.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }

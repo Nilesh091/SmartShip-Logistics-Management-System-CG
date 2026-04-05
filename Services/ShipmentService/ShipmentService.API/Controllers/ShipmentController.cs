@@ -80,6 +80,7 @@ public class ShipmentController : ControllerBase
 
   /// <summary>
   /// Get a specific shipment by ID (CUSTOMER - only their shipments, ADMIN - all)
+  /// Checks message queue first for any pending updates and applies them
   /// </summary>
   [HttpGet("{id}")]
   [Authorize]
@@ -87,18 +88,21 @@ public class ShipmentController : ControllerBase
   {
     try
     {
-      var shipment = await _service.GetShipmentByIdAsync(id);
-      if (shipment == null)
-        return NotFound(new { error = "Shipment not found." });
-
       var userId = GetUserIdFromClaims();
       var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+      _logger.LogInformation($"Fetching shipment {id} - checking for pending updates");
+
+      // Check message queue for pending updates and apply them to database
+      var shipment = await _service.ConsumePendingUpdatesAndGetShipmentAsync(id);
+
+      if (shipment == null)
+        return NotFound(new { error = "Shipment not found." });
 
       // Check authorization: CUSTOMER can only see their own shipments
       if (userRole != "ADMIN" && shipment.UserId != userId)
         return Forbid();
 
-      _logger.LogInformation($"Fetching shipment {id}");
       return Ok(shipment);
     }
     catch (Exception ex)
@@ -222,6 +226,90 @@ public class ShipmentController : ControllerBase
     {
       _logger.LogError($"Error updating shipment status for {id}: {ex.Message}");
       return StatusCode(500, new { error = "An error occurred while updating the shipment status." });
+    }
+  }
+
+  /// <summary>
+  /// Explicitly consume pending events from message queue for a specific shipment
+  /// Updates database with any pending status changes and returns updated shipment
+  /// </summary>
+  [HttpPost("{id}/consume-pending-events")]
+  [Authorize]
+  public async Task<IActionResult> ConsumePendingEvents(Guid id)
+  {
+    try
+    {
+      var userId = GetUserIdFromClaims();
+      var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+      var shipment = await _service.GetShipmentByIdAsync(id);
+      if (shipment == null)
+        return NotFound(new { error = "Shipment not found." });
+
+      // Check authorization: CUSTOMER can only access their own shipments
+      if (userRole != "ADMIN" && shipment.UserId != userId)
+        return Forbid();
+
+      _logger.LogInformation($"User {userId} consuming pending events for shipment {id}");
+
+      // Get pending message count
+      var pendingCount = await _service.GetPendingMessageCountAsync(id);
+
+      // Consume pending updates and get updated shipment
+      var updatedShipment = await _service.ConsumePendingUpdatesAndGetShipmentAsync(id);
+
+      if (updatedShipment == null)
+        return NotFound(new { error = "Shipment not found." });
+
+      return Ok(new
+      {
+        message = $"Successfully consumed {pendingCount} pending event(s) for shipment {id}.",
+        pendingEventsProcessed = pendingCount,
+        shipment = updatedShipment
+      });
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError($"Error consuming pending events for shipment {id}: {ex.Message}");
+      return StatusCode(500, new { error = "An error occurred while consuming pending events." });
+    }
+  }
+
+  /// <summary>
+  /// Get pending message count for a specific shipment
+  /// </summary>
+  [HttpGet("{id}/pending-events-count")]
+  [Authorize]
+  public async Task<IActionResult> GetPendingEventsCount(Guid id)
+  {
+    try
+    {
+      var userId = GetUserIdFromClaims();
+      var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+      var shipment = await _service.GetShipmentByIdAsync(id);
+      if (shipment == null)
+        return NotFound(new { error = "Shipment not found." });
+
+      // Check authorization: CUSTOMER can only check their own shipments
+      if (userRole != "ADMIN" && shipment.UserId != userId)
+        return Forbid();
+
+      _logger.LogInformation($"Checking pending events count for shipment {id}");
+
+      var pendingCount = await _service.GetPendingMessageCountAsync(id);
+
+      return Ok(new
+      {
+        shipmentId = id,
+        pendingEventsCount = pendingCount,
+        hasPendingEvents = pendingCount > 0
+      });
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError($"Error getting pending events count for shipment {id}: {ex.Message}");
+      return StatusCode(500, new { error = "An error occurred while checking pending events." });
     }
   }
 
