@@ -1,18 +1,29 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using AuthService.Application.Interfaces;
 using AuthService.Application.Services;
 using AuthService.Infrastructure.Data;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Security;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Auth service API",
+        Version = "v1",
+        Description = "API for managing authentication and authorization operations."
+    });
+});
 
 // Configure Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

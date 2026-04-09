@@ -11,7 +11,8 @@
           "Microsoft.EntityFrameworkCore": "10.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.0",
           "Microsoft.Extensions.Logging": "10.0.5",
-          "RabbitMQ.Client": "7.2.1",
+          "RabbitMQ.Client": "6.6.0",
+          "Shared": "1.0.0",
           "ShipmentService.Application": "1.0.0",
           "ShipmentService.Domain": "1.0.0"
         },
@@ -400,14 +401,11 @@
           }
         }
       },
-      "RabbitMQ.Client/7.2.1": {
-        "dependencies": {
-          "System.Threading.RateLimiting": "8.0.0"
-        },
+      "RabbitMQ.Client/6.6.0": {
         "runtime": {
-          "lib/net8.0/RabbitMQ.Client.dll": {
-            "assemblyVersion": "7.0.0.0",
-            "fileVersion": "7.2.1.0"
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.6.0.0"
           }
         }
       },
@@ -501,11 +499,11 @@
           }
         }
       },
-      "System.Threading.RateLimiting/8.0.0": {
+      "Shared/1.0.0": {
         "runtime": {
-          "lib/net8.0/System.Threading.RateLimiting.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.23.53103"
+          "Shared.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -732,12 +730,12 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
-    "RabbitMQ.Client/7.2.1": {
+    "RabbitMQ.Client/6.6.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-YKXEfg9fVQiTKgZlvIhAfPSFaamEgi8DsQmisCH0IAsU4FYLrtoguDrDj6JtJVGUt40QPnBLRH6fTQcAC4qsOg==",
-      "path": "rabbitmq.client/7.2.1",
-      "hashPath": "rabbitmq.client.7.2.1.nupkg.sha512"
+      "sha512": "sha512-klht0KBLO7xs/uIn8uejq1VC5wJJ8dHJSm2GmFmJHWQnFzWK5YTNUta6IrnuzitR1T5psxIuqwdQqalbTLPtcA==",
+      "path": "rabbitmq.client/6.6.0",
+      "hashPath": "rabbitmq.client.6.6.0.nupkg.sha512"
     },
     "System.ClientModel/1.5.1": {
       "type": "package",
@@ -788,12 +786,10 @@
       "path": "system.security.cryptography.protecteddata/9.0.4",
       "hashPath": "system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
     },
-    "System.Threading.RateLimiting/8.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-7mu9v0QDv66ar3DpGSZHg9NuNcxDaaAcnMULuZlaTpP9+hwXhrxNGsF5GmLkSHxFdb5bBc1TzeujsRgTrPWi+Q==",
-      "path": "system.threading.ratelimiting/8.0.0",
-      "hashPath": "system.threading.ratelimiting.8.0.0.nupkg.sha512"
+    "Shared/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "ShipmentService.Application/1.0.0": {
       "type": "project",

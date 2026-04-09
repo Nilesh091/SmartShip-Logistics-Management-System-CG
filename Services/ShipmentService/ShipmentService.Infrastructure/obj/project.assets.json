@@ -549,18 +549,15 @@
           }
         }
       },
-      "RabbitMQ.Client/7.2.1": {
+      "RabbitMQ.Client/6.6.0": {
         "type": "package",
-        "dependencies": {
-          "System.Threading.RateLimiting": "8.0.0"
-        },
         "compile": {
-          "lib/net8.0/RabbitMQ.Client.dll": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/RabbitMQ.Client.dll": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
             "related": ".xml"
           }
         }
@@ -699,20 +696,14 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "System.Threading.RateLimiting/8.0.0": {
-        "type": "package",
+      "Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
         "compile": {
-          "lib/net8.0/System.Threading.RateLimiting.dll": {
-            "related": ".xml"
-          }
+          "bin/placeholder/Shared.dll": {}
         },
         "runtime": {
-          "lib/net8.0/System.Threading.RateLimiting.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "buildTransitive/net6.0/_._": {}
+          "bin/placeholder/Shared.dll": {}
         }
       },
       "ShipmentService.Application/1.0.0": {
@@ -1521,20 +1512,20 @@
         "microsoft.sqlserver.server.nuspec"
       ]
     },
-    "RabbitMQ.Client/7.2.1": {
-      "sha512": "YKXEfg9fVQiTKgZlvIhAfPSFaamEgi8DsQmisCH0IAsU4FYLrtoguDrDj6JtJVGUt40QPnBLRH6fTQcAC4qsOg==",
+    "RabbitMQ.Client/6.6.0": {
+      "sha512": "klht0KBLO7xs/uIn8uejq1VC5wJJ8dHJSm2GmFmJHWQnFzWK5YTNUta6IrnuzitR1T5psxIuqwdQqalbTLPtcA==",
       "type": "package",
-      "path": "rabbitmq.client/7.2.1",
+      "path": "rabbitmq.client/6.6.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "README.md",
         "icon.png",
-        "lib/net8.0/RabbitMQ.Client.dll",
-        "lib/net8.0/RabbitMQ.Client.xml",
+        "lib/net462/RabbitMQ.Client.dll",
+        "lib/net462/RabbitMQ.Client.xml",
         "lib/netstandard2.0/RabbitMQ.Client.dll",
         "lib/netstandard2.0/RabbitMQ.Client.xml",
-        "rabbitmq.client.7.2.1.nupkg.sha512",
+        "rabbitmq.client.6.6.0.nupkg.sha512",
         "rabbitmq.client.nuspec"
       ]
     },
@@ -1739,34 +1730,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "System.Threading.RateLimiting/8.0.0": {
-      "sha512": "7mu9v0QDv66ar3DpGSZHg9NuNcxDaaAcnMULuZlaTpP9+hwXhrxNGsF5GmLkSHxFdb5bBc1TzeujsRgTrPWi+Q==",
-      "type": "package",
-      "path": "system.threading.ratelimiting/8.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "buildTransitive/net461/System.Threading.RateLimiting.targets",
-        "buildTransitive/net462/_._",
-        "buildTransitive/net6.0/_._",
-        "buildTransitive/netcoreapp2.0/System.Threading.RateLimiting.targets",
-        "lib/net462/System.Threading.RateLimiting.dll",
-        "lib/net462/System.Threading.RateLimiting.xml",
-        "lib/net6.0/System.Threading.RateLimiting.dll",
-        "lib/net6.0/System.Threading.RateLimiting.xml",
-        "lib/net7.0/System.Threading.RateLimiting.dll",
-        "lib/net7.0/System.Threading.RateLimiting.xml",
-        "lib/net8.0/System.Threading.RateLimiting.dll",
-        "lib/net8.0/System.Threading.RateLimiting.xml",
-        "lib/netstandard2.0/System.Threading.RateLimiting.dll",
-        "lib/netstandard2.0/System.Threading.RateLimiting.xml",
-        "system.threading.ratelimiting.8.0.0.nupkg.sha512",
-        "system.threading.ratelimiting.nuspec",
-        "useSharedDesignerContext.txt"
-      ]
+    "Shared/1.0.0": {
+      "type": "project",
+      "path": "../../../Shared/Shared.csproj",
+      "msbuildProject": "../../../Shared/Shared.csproj"
     },
     "ShipmentService.Application/1.0.0": {
       "type": "project",
@@ -1784,7 +1751,8 @@
       "Microsoft.EntityFrameworkCore >= 10.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 10.0.0",
       "Microsoft.Extensions.Logging >= 10.0.5",
-      "RabbitMQ.Client >= 7.2.1",
+      "RabbitMQ.Client >= 6.6.0",
+      "Shared >= 1.0.0",
       "ShipmentService.Application >= 1.0.0",
       "ShipmentService.Domain >= 1.0.0"
     ]
@@ -1819,6 +1787,9 @@
             },
             "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/ShipmentService.Domain.csproj": {
               "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/ShipmentService.Domain.csproj"
+            },
+            "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj": {
+              "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj"
             }
           }
         }
@@ -1853,7 +1824,7 @@
           },
           "RabbitMQ.Client": {
             "target": "Package",
-            "version": "[7.2.1, )"
+            "version": "[6.6.0, )"
           }
         },
         "imports": [

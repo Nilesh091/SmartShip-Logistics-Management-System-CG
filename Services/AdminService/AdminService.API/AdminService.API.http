@@ -1,6 +1,55 @@
 @AdminService.API_HostAddress = http://localhost:5127
+@AdminService.Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW5Ac21hcnRzaGlwLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiVXNlcklkIjoiNTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAxIiwiZXhwIjoxNzc1NzI1OTQ0LCJpc3MiOiJBdXRoU2VydmljZSIsImF1ZCI6IkF1dGhTZXJ2aWNlQVBJIn0.3UhYcJKqwWkifz_8BFPfFLMNvWjwKrqF1VsS1mj-5ec
 
-GET {{AdminService.API_HostAddress}}/weatherforecast/
+### Dashboard - Get admin monitoring dashboard
+GET {{AdminService.API_HostAddress}}/api/Admin/dashboard
+Authorization: {{AdminService.Token}}
+Accept: application/json
+
+###
+
+### Get Exception Shipments - Delayed, failed, stuck, etc.
+GET {{AdminService.API_HostAddress}}/api/admin/shipments/exceptions
+Authorization: {{AdminService.Token}}
+Accept: application/json
+
+###
+
+### Get All Shipments
+GET {{AdminService.API_HostAddress}}/api/admin/shipments
+Authorization: {{AdminService.Token}}
+Accept: application/json
+
+###
+
+### Resolve Shipment - Mark as resolved
+PUT {{AdminService.API_HostAddress}}/api/admin/shipments/{{shipmentId}}/resolve
+Authorization: {{AdminService.Token}}
+Content-Type: application/json
+
+###
+
+### Get All Users - From AuthService
+GET {{AdminService.API_HostAddress}}/api/admin/users
+Authorization: {{AdminService.Token}}
+Accept: application/json
+
+###
+
+### Update User Role - Promote user to ADMIN
+PUT {{AdminService.API_HostAddress}}/api/admin/users/{{userId}}
+Authorization: {{AdminService.Token}}
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+###
+
+### Get Reports - Analytics and statistics
+GET {{AdminService.API_HostAddress}}/api/admin/reports
+Authorization: {{AdminService.Token}}
 Accept: application/json
 
 ###

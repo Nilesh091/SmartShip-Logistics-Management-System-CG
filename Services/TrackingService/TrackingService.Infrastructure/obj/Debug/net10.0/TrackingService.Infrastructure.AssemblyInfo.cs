@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TrackingService.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e1b57c0b9b92572d66e56fe2d4d5e19194facb7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8732acdef0bfbf235ecc305f8d60dd83a4f4eb43")]
 [assembly: System.Reflection.AssemblyProductAttribute("TrackingService.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TrackingService.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,12 +1,12 @@
-namespace ShipmentService.Domain.Events;
+using System;
 
-public class ShipmentCreatedEvent
+namespace ShipmentService.Domain.Events
 {
-  public Guid ShipmentId { get; set; }
-
-  public Guid UserId { get; set; }
-
-  public string Status { get; set; } = string.Empty;
-
-  public DateTime CreatedAt { get; set; }
+    public class ShipmentCreatedEvent
+    {
+        public Guid ShipmentId { get; set; }
+        public Guid UserId { get; set; }
+        public string Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
 }

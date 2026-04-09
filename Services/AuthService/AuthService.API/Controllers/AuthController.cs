@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AuthService.Application.DTOs;
 using AuthService.Application.Interfaces;
 
@@ -70,5 +71,36 @@ namespace AuthService.API.Controllers
         return BadRequest(new { message = ex.Message });
       }
     }
+
+    [HttpGet("admin/users")]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> GetAllUsers()
+    {
+      try
+      {
+        var users = await _authService.GetAllUsersAsync();
+        return Ok(new { success = true, message = "Users retrieved successfully", data = users });
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new { message = ex.Message });
+      }
+    }
+
+    [HttpPut("admin/users/{userId}")]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<IActionResult> UpdateUserRole(Guid userId, [FromBody] UpdateUserRoleRequestDto dto)
+    {
+      try
+      {
+        var result = await _authService.UpdateUserRoleAsync(userId, dto);
+        return Ok(new { success = true, message = "User role updated successfully", data = result });
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new { message = ex.Message });
+      }
+    }
   }
 }
+

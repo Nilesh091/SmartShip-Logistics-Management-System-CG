@@ -18,3 +18,5 @@
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Infrastructure/obj/Debug/net10.0/TrackingService.Infrastructure.pdb
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Infrastructure/obj/Debug/net10.0/TrackingService.Infrastructure.genruntimeconfig.cache
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Infrastructure/obj/Debug/net10.0/ref/TrackingService.Infrastructure.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Infrastructure/bin/Debug/net10.0/Shared.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Infrastructure/bin/Debug/net10.0/Shared.pdb

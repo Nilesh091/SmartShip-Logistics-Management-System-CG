@@ -1,19 +1,16 @@
 using TrackingService.Application.Repositories.Interfaces;
 using TrackingService.Application.Services.Interfaces;
 using TrackingService.Domain.Entities;
-using TrackingService.Domain.Events;
 
 namespace TrackingService.Application.Services.Implementations;
 
 public class TrackingService : ITrackingService
 {
   private readonly ITrackingRepository _repository;
-  private readonly IRabbitMQProducer _producer;
 
-  public TrackingService(ITrackingRepository repository, IRabbitMQProducer producer)
+  public TrackingService(ITrackingRepository repository)
   {
     _repository = repository;
-    _producer = producer;
   }
 
   public async Task AddEventAsync(TrackingEvent trackingEvent)
@@ -43,16 +40,5 @@ public class TrackingService : ITrackingService
     // Save to database
     await _repository.AddEventAsync(trackingEvent);
     await _repository.SaveChangesAsync();
-
-    // Publish event to RabbitMQ so ShipmentService and other services can consume
-    var @event = new ShipmentStatusChangedEvent
-    {
-      ShipmentId = shipmentId,
-      Status = status,
-      Location = location,
-      Timestamp = trackingEvent.Timestamp
-    };
-
-    await _producer.PublishShipmentStatusChangedAsync(@event);
   }
 }

@@ -21,9 +21,26 @@ namespace AuthService.Infrastructure.Repositories
           .FirstOrDefaultAsync(u => u.Email == email);
     }
 
+    public async Task<User?> GetByIdAsync(Guid id)
+    {
+      return await _context.Users
+          .Include(u => u.RefreshTokens)
+          .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<List<User>> GetAllAsync()
+    {
+      return await _context.Users.ToListAsync();
+    }
+
     public async Task AddAsync(User user)
     {
       await _context.Users.AddAsync(user);
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+      _context.Users.Update(user);
     }
 
     public async Task SaveChangesAsync()
@@ -32,3 +49,4 @@ namespace AuthService.Infrastructure.Repositories
     }
   }
 }
+

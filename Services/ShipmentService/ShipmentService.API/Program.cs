@@ -5,32 +5,57 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShipmentService.Application.Services;
 using ShipmentService.Application.Repositories;
-using ShipmentService.Application.MessagePublishing;
 using ShipmentService.Infrastructure.Persistence;
 using ShipmentService.Infrastructure.Repositories;
-using ShipmentService.Infrastructure.MessagePublishing;
 
 using System.Text;
+using TrackingService.Infrastructure.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen(options =>
+// {
+//     // Add JWT security definition
+//     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//     {
+//         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+//         Name = "Authorization",
+//         In = ParameterLocation.Header,
+//         Type = SecuritySchemeType.Http,
+//         Scheme = "Bearer",
+//         BearerFormat = "JWT"
+//     });
+
+//     // Add API info
+//     // options.SwaggerDoc("v1", new OpenApiInfo
+//     // {
+//     //     Title = "ShipmentService API",
+//     //     Version = "v1.0",
+//     //     Description = "API for managing shipments with JWT authentication",
+//     //     Contact = new OpenApiContact
+//     //     {
+//     //         Name = "SmartShip Logistics",
+//     //         Url = new Uri("https://smartship.com")
+//     //     }
+//     // });
+// });
 builder.Services.AddSwaggerGen(options =>
 {
-    // Add JWT security definition
+    // Define JWT Auth scheme
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
         Name = "Authorization",
-        In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT"
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid token.\n\nExample: Bearer abc123xyz"
     });
 
-    // Add security requirement to all operations
+    // Apply JWT globally
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -40,26 +65,16 @@ builder.Services.AddSwaggerGen(options =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
+                }
             },
-            new List<string>()
+            new string[] {}
         }
     });
-
-    // Add API info
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "ShipmentService API",
-        Version = "v1.0",
-        Description = "API for managing shipments with JWT authentication",
-        Contact = new OpenApiContact
-        {
-            Name = "SmartShip Logistics",
-            Url = new Uri("https://smartship.com")
-        }
+        Title = "Shipment service API",
+        Version = "v1",
+        Description = "API for managing shipment operations in the logistics system."
     });
 });
 
@@ -84,7 +99,7 @@ builder.Services.AddDbContext<ShipmentDbContext>(options =>
 
 // Add JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.ASCII.GetBytes(jwtSettings["Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-security");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-security");
 var issuer = jwtSettings["Issuer"] ?? "AuthService";
 var audience = jwtSettings["Audience"] ?? "AuthServiceAPI";
 
@@ -108,40 +123,9 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add Message Publishing & Consuming configuration
-var rabbitMQHost = builder.Configuration["RabbitMQ:HostName"] ?? "localhost";
-var queueName = builder.Configuration["RabbitMQ:QueueName"] ?? "shipment-status-changed-event-events";
-
 // Add Application Services
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
-
-// Add Message Polling for GET requests
-builder.Services.AddScoped<IMessagePoller>(sp =>
-    new RabbitMQMessagePoller(
-        rabbitMQHost,
-        queueName,
-        sp.GetRequiredService<ILoggerFactory>().CreateLogger<RabbitMQMessagePoller>()
-    )
-);
-
 builder.Services.AddScoped<IShipmentService, ShipmentService.Application.Services.ShipmentService>();
-
-// Add Message Publishing
-builder.Services.AddScoped<IMessagePublisher>(sp =>
-    new MessagePublisher(rabbitMQHost, sp.GetRequiredService<ILogger<MessagePublisher>>())
-);
-
-// Add Message Consuming (Background Service)
-builder.Services.AddScoped<IMessageConsumer>(sp =>
-    new MessageConsumer(
-        rabbitMQHost,
-        queueName,
-        sp.GetRequiredService<IShipmentRepository>(),
-        sp.GetRequiredService<ILoggerFactory>().CreateLogger<MessageConsumer>()
-    )
-);
-
-builder.Services.AddHostedService<ShipmentService.API.BackgroundServices.ShipmentStatusConsumerBackgroundService>();
 
 // Add Logging
 builder.Services.AddLogging(config =>
@@ -150,6 +134,7 @@ builder.Services.AddLogging(config =>
     config.AddConsole();
     config.AddDebug();
 });
+builder.Services.AddScoped<IRabbitMQPublisher, RabbitMQPublisher>();
 
 var app = builder.Build();
 
@@ -157,13 +142,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ShipmentService API v1");
-        options.RoutePrefix = string.Empty; // Serve Swagger UI at root
-        options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
-        options.DefaultModelsExpandDepth(2);
-    });
+    // app.UseSwaggerUI(options =>
+    // {
+    //     options.RoutePrefix = string.Empty; // Serve Swagger UI at root
+    //     options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
+    //     options.DefaultModelsExpandDepth(2);
+    // });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

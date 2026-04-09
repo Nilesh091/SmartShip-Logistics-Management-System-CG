@@ -67,6 +67,38 @@ namespace AuthService.Application.Services
       return true;
     }
 
+    public async Task<List<UserResponseDto>> GetAllUsersAsync()
+    {
+      var users = await _userRepository.GetAllAsync();
+      return users.Select(u => new UserResponseDto
+      {
+        Id = u.Id,
+        Name = u.Name,
+        Email = u.Email,
+        Role = u.Role
+      }).ToList();
+    }
+
+    public async Task<UserResponseDto> UpdateUserRoleAsync(Guid userId, UpdateUserRoleRequestDto dto)
+    {
+      var user = await _userRepository.GetByIdAsync(userId);
+
+      if (user == null)
+        throw new Exception("User not found");
+
+      user.Role = dto.Role;
+      await _userRepository.UpdateAsync(user);
+      await _userRepository.SaveChangesAsync();
+
+      return new UserResponseDto
+      {
+        Id = user.Id,
+        Name = user.Name,
+        Email = user.Email,
+        Role = user.Role
+      };
+    }
+
     private async Task<AuthResponseDto> GenerateTokens(User user)
     {
       var accessToken = _tokenService.GenerateAccessToken(user);

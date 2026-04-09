@@ -1,5 +1,6 @@
 using System;
 using AuthService.Application.DTOs;
+
 namespace AuthService.Application.Interfaces
 {
     public interface IAuthService
@@ -8,6 +9,7 @@ namespace AuthService.Application.Interfaces
         Task<AuthResponseDto> Login(LoginDto dto);
         Task<AuthResponseDto> RefreshToken(string token);
         Task<bool> RevokeToken(string token);
-
+        Task<List<UserResponseDto>> GetAllUsersAsync();
+        Task<UserResponseDto> UpdateUserRoleAsync(Guid userId, UpdateUserRoleRequestDto dto);
     }
 }
