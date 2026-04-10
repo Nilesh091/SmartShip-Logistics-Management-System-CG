@@ -1,6 +1,455 @@
-@Gateway.API_HostAddress = http://localhost:5166
+### SmartShip Gateway API - Comprehensive Testing Suite
+### API Gateway with Ocelot Routing
+### Base URL: http://localhost:5166
 
-GET {{Gateway.API_HostAddress}}/weatherforecast/
-Accept: application/json
+@gateway = http://localhost:5166
+@auth_service = http://localhost:5045
+@admin_service = http://localhost:5127
+@tracking_service = http://localhost:5062
+@shipment_service = http://localhost:5286
+
+# Token variables (populate after login)
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicmFuamFubmlsZXNoNDBAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ1VTVE9NRVIiLCJVc2VySWQiOiI3NDZkMGJmOC1kYTk0LTQ0NDctODEyOC0zMzcxMTQyNWZkMTgiLCJleHAiOjE3NzU3OTYzMzAsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQXV0aFNlcnZpY2VBUEkifQ.MvEpliCNnEJMjiuDLfublwpn3SgGZ2PvV2iUGw4kPQ8 
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW5Ac21hcnRzaGlwLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiVXNlcklkIjoiNTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAxIiwiZXhwIjoxNzc1Nzk3Mjc2LCJpc3MiOiJBdXRoU2VydmljZSIsImF1ZCI6IkF1dGhTZXJ2aWNlQVBJIn0.AOcUypfjbIYEVXrQnXWirABFchx2muVautMbPg0HwXM
+@customer_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoicmFuamFubmlsZXNoNDBAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ1VTVE9NRVIiLCJVc2VySWQiOiI3NDZkMGJmOC1kYTk0LTQ0NDctODEyOC0zMzcxMTQyNWZkMTgiLCJleHAiOjE3NzU3OTYzMzAsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQXV0aFNlcnZpY2VBUEkifQ.MvEpliCNnEJMjiuDLfublwpn3SgGZ2PvV2iUGw4kPQ8
+@sample_shipment_id = d425bdd7-1399-4ecc-8940-3a85e6909c0b
+@sample_user_id = 
+
+### ============================================================
+### AUTH SERVICE ROUTES (via Gateway: /auth/*)
+### ============================================================
+
+### Register Customer via Gateway
+POST {{gateway}}/auth/signup
+Content-Type: application/json
+
+{
+  "username": "gateway_customer",
+  "email": "gateway@smartship.com",
+  "password": "Gateway@123"
+}
 
 ###
+
+### Register Admin via Gateway
+POST {{gateway}}/auth/signup
+Content-Type: application/json
+
+{
+  "username": "gateway_admin",
+  "email": "admin@smartship.com",
+  "password": "Admin@123",
+  "role": "ADMIN"
+}
+
+###
+
+### Login via Gateway - Get Token
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "ranjannilesh40@gmail.com",
+  "password": "2004@Nilu"
+}
+
+###
+
+### Login Admin via Gateway
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@smartship.com",
+  "password": "Admin@123"
+}
+
+
+###
+
+### Refresh Token via Gateway
+POST {{gateway}}/auth/refresh?token={{auth_token}}
+Content-Type: application/json
+
+###
+
+### Revoke Token via Gateway
+POST {{gateway}}/auth/revoke?token={{auth_token}}
+Content-Type: application/json
+
+###
+
+### Get All Users via Gateway (ADMIN only)
+GET {{gateway}}/auth/admin/users
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Update User Role via Gateway (ADMIN only)
+PUT {{gateway}}/auth/admin/users/{{sample_user_id}}
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+###
+
+### ============================================================
+### ADMIN SERVICE ROUTES (via Gateway: /admin/*)
+### ============================================================
+
+### Get Dashboard via Gateway (ADMIN only)
+GET {{gateway}}/admin/dashboard
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Get Exception Shipments via Gateway (ADMIN only)
+GET {{gateway}}/admin/shipments/exceptions
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Get All Shipments via Gateway (ADMIN only)
+GET {{gateway}}/admin/shipments
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Resolve Shipment Exception via Gateway (ADMIN only)
+PUT {{gateway}}/admin/shipments/{{sample_shipment_id}}/resolve
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Get All Users via Gateway (ADMIN only)
+GET {{gateway}}/admin/users
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Update User Role via Gateway (ADMIN only)
+PUT {{gateway}}/admin/users/{{sample_user_id}}
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "role": "CUSTOMER",
+  "status": "ACTIVE"
+}
+
+###
+
+### Get Reports via Gateway (ADMIN only)
+GET {{gateway}}/admin/reports
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### ============================================================
+### SHIPMENT SERVICE ROUTES (via Gateway: /shipments/*)
+### ============================================================
+
+### Create Shipment via Gateway (CUSTOMER only)
+POST {{gateway}}/shipments
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "senderName": "Gateway Sender",
+  "senderAddress": "789 Bridge St, Boston, MA 02101",
+  "senderPhone": "+1-555-7890",
+  "recipientName": "Gateway Recipient",
+  "recipientAddress": "321 Harbor Ave, Seattle, WA 98101",
+  "recipientPhone": "+1-555-9999",
+  "itemDescription": "Gateway Test Package",
+  "weight": 3.0,
+  "dimensions": "35x25x20 cm",
+  "estimatedValue": 750.00,
+  "serviceType": "OVERNIGHT"
+}
+
+###
+
+### Get My Shipments via Gateway (CUSTOMER)
+GET {{gateway}}/shipments/my
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Get Specific Shipment via Gateway (CUSTOMER - own, ADMIN - any)
+GET {{gateway}}/shipments/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Book Shipment via Gateway (CUSTOMER only)
+PUT {{gateway}}/shipments/{{sample_shipment_id}}/book
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Cancel Shipment via Gateway (CUSTOMER only)
+DELETE {{gateway}}/shipments/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Get All Shipments via Gateway (ADMIN only)
+GET {{gateway}}/shipments/admin/all
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+###
+
+### Update Shipment Status via Gateway (ADMIN only)
+PUT {{gateway}}/shipments/{{sample_shipment_id}}/status
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "status": "OUT_FOR_DELIVERY"
+}
+
+###
+
+### ============================================================
+### TRACKING SERVICE ROUTES (via Gateway: /tracking/*)
+### ============================================================
+
+### Get Tracking Timeline via Gateway (requires token for gateway auth)
+GET {{gateway}}/tracking/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Update Shipment Status via Gateway
+PUT {{gateway}}/tracking/{{sample_shipment_id}}/status
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "status": "PICKED_UP",
+  "location": "Main Distribution Center"
+}
+
+###
+
+### Upload Document via Gateway (ADMIN only)
+POST {{gateway}}/tracking/{{sample_shipment_id}}/documents/upload
+Authorization: Bearer {{admin_token}}
+
+< ./sample-documents/sample-invoice.pdf
+
+###
+
+### Get All Documents via Gateway
+GET {{gateway}}/tracking/{{sample_shipment_id}}/documents
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Submit Delivery Proof via Gateway
+POST {{gateway}}/tracking/{{sample_shipment_id}}/delivery-proof
+Authorization: Bearer {{customer_token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="recipientName"
+
+Gateway Test Recipient
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="deliveryLocation"
+
+321 Harbor Ave, Seattle, WA 98101
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### Get Delivery Proof via Gateway
+GET {{gateway}}/tracking/{{sample_shipment_id}}/delivery-proof
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### ============================================================
+### COMPLETE END-TO-END WORKFLOW VIA GATEWAY
+### ============================================================
+
+### Step 1: Register Customer Account
+POST {{gateway}}/auth/signup
+Content-Type: application/json
+
+{
+  "username": "e2e_customer",
+  "email": "e2e@smartship.com",
+  "password": "E2E@123"
+}
+
+###
+
+### Step 2: Login to Get Token
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "e2e_customer",
+  "password": "E2E@123"
+}
+
+###
+
+### Step 3: Create Shipment (extract shipment_id from response)
+POST {{gateway}}/shipments
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "senderName": "E2E Sender",
+  "senderAddress": "100 Main St, NYC, NY 10001",
+  "senderPhone": "+1-555-1111",
+  "recipientName": "E2E Recipient",
+  "recipientAddress": "200 Park Ave, LA, CA 90001",
+  "recipientPhone": "+1-555-2222",
+  "itemDescription": "E2E Test Package",
+  "weight": 1.5,
+  "dimensions": "25x15x10 cm",
+  "estimatedValue": 100.00,
+  "serviceType": "STANDARD"
+}
+
+###
+
+### Step 4: Book Shipment (transitions Draft → Booked)
+PUT {{gateway}}/shipments/{{sample_shipment_id}}/book
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Step 5: Get Tracking Timeline
+GET {{gateway}}/tracking/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### Step 6: Update Status - Picked Up
+PUT {{gateway}}/tracking/{{sample_shipment_id}}/status
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "status": "PICKED_UP",
+  "location": "NYC Pickup Center"
+}
+
+###
+
+### Step 7: Update Status - In Transit
+PUT {{gateway}}/tracking/{{sample_shipment_id}}/status
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "status": "IN_TRANSIT",
+  "location": "Regional Hub - Chicago"
+}
+
+###
+
+### Step 8: Update Status - Out for Delivery
+PUT {{gateway}}/tracking/{{sample_shipment_id}}/status
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "status": "OUT_FOR_DELIVERY",
+  "location": "Local Delivery Station - LA"
+}
+
+###
+
+### Step 9: Submit Delivery Proof
+POST {{gateway}}/tracking/{{sample_shipment_id}}/delivery-proof
+Authorization: Bearer {{customer_token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="recipientName"
+
+E2E Recipient
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="deliveryLocation"
+
+200 Park Ave, LA, CA 90001
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+### Step 10: Verify Final Tracking Status
+GET {{gateway}}/tracking/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+###
+
+### ============================================================
+### INFORMATION & NOTES
+### ============================================================
+
+# GATEWAY ROUTING CONFIGURATION:
+# The Gateway routes requests to microservices based on URL prefix:
+#
+# /auth/*       → Auth Service (http://localhost:5045/api/auth/*)
+# /admin/*      → Admin Service (http://localhost:5127/api/admin/*)
+# /shipments/*  → Shipment Service (http://localhost:5286/api/shipments/*)
+# /tracking/*   → Tracking Service (http://localhost:5062/api/tracking/*)
+
+# AUTHENTICATION:
+# - /auth/signup and /auth/login are PUBLIC (no token required)
+# - ALL other endpoints (including /tracking/*) require Bearer token via Gateway
+# - Note: Individual tracking service may not require auth, but Gateway enforces it
+# - Extract token from login response and save to @auth_token or @customer_token
+# - Use: Authorization: Bearer {{customer_token}} for all protected routes
+
+# USER ROLES:
+# - CUSTOMER: Can create/manage own shipments, view tracking
+# - ADMIN: Full access to all admin endpoints and monitoring
+
+# SHIPMENT STATUS TRANSITIONS:
+# DRAFT → BOOKED → PICKED_UP → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED
+# OR
+# DRAFT/BOOKED → CANCELLED (if canceled before pickup)
+
+# HTTP STATUS CODES:
+# 200 - OK (successful request)
+# 201 - Created (resource created)
+# 400 - Bad Request (validation error)
+# 401 - Unauthorized (missing/invalid token)
+# 403 - Forbidden (insufficient permissions)
+# 404 - Not Found (resource doesn't exist)
+# 500 - Internal Server Error
+
+# TESTING TIPS:
+# 1. Use Step 1-2 to get valid tokens first
+# 2. Update @customer_token and @admin_token with actual tokens
+# 3. Copy shipment ID from Step 3 response into @sample_shipment_id
+# 4. Use Variables section at top for all dynamic values
+# 5. Test each section independently or run full workflow

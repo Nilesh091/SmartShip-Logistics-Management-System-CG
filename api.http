@@ -1,0 +1,756 @@
+### SmartShip Logistics Management System - API Testing
+### Complete Endpoint Test Suite
+### Services Architecture:
+###  - Gateway: http://localhost:5166 (API Gateway with Ocelot)
+###  - Auth Service: http://localhost:5045
+###  - Admin Service: http://localhost:5127
+###  - Tracking Service: http://localhost:5062
+###  - Shipment Service: http://localhost:5286
+
+### ============================================================
+### VARIABLES
+### ============================================================
+
+@gateway = http://localhost:5166
+@auth_service = http://localhost:5045
+@admin_service = http://localhost:5127
+@tracking_service = http://localhost:5062
+@shipment_service = http://localhost:5286
+
+# These will be populated after login
+@auth_token = 
+@admin_token = 
+@customer_token = 
+@sample_shipment_id = 
+@sample_user_id = 
+
+### ============================================================
+### 1. AUTH SERVICE ENDPOINTS
+### ============================================================
+
+### 1.1 Register a new user (CUSTOMER)
+POST {{auth_service}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "customer1",
+  "email": "customer1@smartship.com",
+  "password": "Customer@123"
+}
+
+### 1.2 Register an admin user
+POST {{auth_service}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "email": "admin1@smartship.com",
+  "password": "Admin@123",
+  "role": "ADMIN"
+}
+
+### 1.3 Login - Get JWT Token (Customer)
+POST {{auth_service}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "customer1",
+  "password": "Customer@123"
+}
+
+### 1.4 Login - Get JWT Token (Admin)
+POST {{auth_service}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "Admin@123"
+}
+
+### 1.5 Refresh Token
+POST {{auth_service}}/api/auth/refresh?token={{auth_token}}
+Content-Type: application/json
+
+### 1.6 Revoke Token
+POST {{auth_service}}/api/auth/revoke?token={{auth_token}}
+Content-Type: application/json
+
+### 1.7 Get All Users (ADMIN only)
+GET {{auth_service}}/api/auth/admin/users
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 1.8 Update User Role (ADMIN only)
+PUT {{auth_service}}/api/auth/admin/users/{{sample_user_id}}
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+### ============================================================
+### 2. ADMIN SERVICE ENDPOINTS
+### ============================================================
+
+### 2.1 Get Dashboard (ADMIN only)
+GET {{admin_service}}/api/admin/dashboard
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 2.2 Get Exception Shipments (ADMIN only)
+GET {{admin_service}}/api/admin/shipments/exceptions
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 2.3 Get All Shipments (ADMIN only)
+GET {{admin_service}}/api/admin/shipments
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 2.4 Resolve Shipment Exception (ADMIN only)
+PUT {{admin_service}}/api/admin/shipments/{{sample_shipment_id}}/resolve
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 2.5 Get All Users (ADMIN only)
+GET {{admin_service}}/api/admin/users
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 2.6 Update User Role (ADMIN only)
+PUT {{admin_service}}/api/admin/users/{{sample_user_id}}
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "role": "CUSTOMER",
+  "status": "ACTIVE"
+}
+
+### 2.7 Get Reports (ADMIN only)
+GET {{admin_service}}/api/admin/reports
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### ============================================================
+### 3. SHIPMENT SERVICE ENDPOINTS
+### ============================================================
+
+### 3.1 Create New Shipment (CUSTOMER only)
+POST {{shipment_service}}/api/shipments
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "senderName": "John Doe",
+  "senderAddress": "123 Main St, New York, NY 10001",
+  "senderPhone": "+1-555-0123",
+  "recipientName": "Jane Smith",
+  "recipientAddress": "456 Oak Ave, Los Angeles, CA 90001",
+  "recipientPhone": "+1-555-0456",
+  "itemDescription": "Electronics Package",
+  "weight": 2.5,
+  "dimensions": "30x20x15 cm",
+  "estimatedValue": 500.00,
+  "serviceType": "EXPRESS"
+}
+
+### 3.2 Get My Shipments (CUSTOMER - their own shipments)
+GET {{shipment_service}}/api/shipments/my
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 3.3 Get Specific Shipment (CUSTOMER - own, ADMIN - any)
+GET {{shipment_service}}/api/shipments/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 3.4 Book Shipment (CUSTOMER only - transitions Draft to Booked)
+PUT {{shipment_service}}/api/shipments/{{sample_shipment_id}}/book
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 3.5 Cancel Shipment (CUSTOMER only - only Draft/Booked status)
+DELETE {{shipment_service}}/api/shipments/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 3.6 Get All Shipments (ADMIN only - monitoring)
+GET {{shipment_service}}/api/shipments/admin/all
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 3.7 Update Shipment Status (ADMIN only)
+PUT {{shipment_service}}/api/shipments/{{sample_shipment_id}}/status
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "status": "IN_TRANSIT"
+}
+
+### ============================================================
+### 4. TRACKING SERVICE ENDPOINTS
+### ============================================================
+
+### 4.1 Get Tracking Timeline (Get shipment status history)
+GET {{tracking_service}}/api/tracking/{{sample_shipment_id}}
+Content-Type: application/json
+
+### 4.2 Update Shipment Status with Location (Tracking Update)
+PUT {{tracking_service}}/api/tracking/{{sample_shipment_id}}/status
+Content-Type: application/json
+
+{
+  "status": "IN_TRANSIT",
+  "location": "Distribution Center - Chicago, IL"
+}
+
+### 4.3 Upload Document (ADMIN only - Invoice, Shipping Label, etc.)
+POST {{tracking_service}}/api/tracking/{{sample_shipment_id}}/documents/upload
+Authorization: Bearer {{admin_token}}
+
+< ./sample-documents/sample-invoice.pdf
+
+### 4.4 Get All Documents for Shipment
+GET {{tracking_service}}/api/tracking/{{sample_shipment_id}}/documents
+Content-Type: application/json
+
+### 4.5 Submit Delivery Proof (POD - with recipient signature/image)
+POST {{tracking_service}}/api/tracking/{{sample_shipment_id}}/delivery-proof
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="recipientName"
+
+Jane Smith
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="deliveryLocation"
+
+456 Oak Ave, Los Angeles, CA 90001
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="signature"; filename="signature.png"
+Content-Type: image/png
+
+< ./sample-documents/sample-signature.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="proofImage"; filename="delivery-proof.jpg"
+Content-Type: image/jpeg
+
+< ./sample-documents/sample-delivery-proof.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 4.6 Get Delivery Proof for Shipment
+GET {{tracking_service}}/api/tracking/{{sample_shipment_id}}/delivery-proof
+Content-Type: application/json
+
+### ============================================================
+### 5. GATEWAY ENDPOINTS (Routing through Ocelot)
+### ============================================================
+### Gateway acts as API Gateway routing to all microservices
+### Base URL: http://localhost:5166
+### Routes:
+###   - /auth/* → Auth Service (5045)
+###   - /admin/* → Admin Service (5127)
+###   - /shipments/* → Shipment Service (5286)
+###   - /tracking/* → Tracking Service (5062)
+
+### ============================================================
+### 5.A - AUTH ENDPOINTS VIA GATEWAY
+### ============================================================
+
+### 5A.1 Register via Gateway
+POST {{gateway}}/auth/signup
+Content-Type: application/json
+
+{
+  "username": "gateway_customer",
+  "email": "gateway@smartship.com",
+  "password": "Gateway@123"
+}
+
+### 5A.2 Login via Gateway
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "gateway_customer",
+  "password": "Gateway@123"
+}
+
+### 5A.3 Refresh Token via Gateway
+POST {{gateway}}/auth/refresh?token={{auth_token}}
+Content-Type: application/json
+
+### 5A.4 Revoke Token via Gateway
+POST {{gateway}}/auth/revoke?token={{auth_token}}
+Content-Type: application/json
+
+### 5A.5 Get All Users via Gateway (ADMIN only)
+GET {{gateway}}/auth/admin/users
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5A.6 Update User Role via Gateway (ADMIN only)
+PUT {{gateway}}/auth/admin/users/{{sample_user_id}}
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "role": "ADMIN"
+}
+
+### ============================================================
+### 5.B - ADMIN ENDPOINTS VIA GATEWAY
+### ============================================================
+
+### 5B.1 Get Dashboard via Gateway (ADMIN only)
+GET {{gateway}}/admin/dashboard
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5B.2 Get Exception Shipments via Gateway (ADMIN only)
+GET {{gateway}}/admin/shipments/exceptions
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5B.3 Get All Shipments via Gateway (ADMIN only)
+GET {{gateway}}/admin/shipments
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5B.4 Resolve Shipment via Gateway (ADMIN only)
+PUT {{gateway}}/admin/shipments/{{sample_shipment_id}}/resolve
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5B.5 Get All Users via Gateway (ADMIN only)
+GET {{gateway}}/admin/users
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5B.6 Update User Role via Gateway (ADMIN only)
+PUT {{gateway}}/admin/users/{{sample_user_id}}
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "role": "CUSTOMER",
+  "status": "ACTIVE"
+}
+
+### 5B.7 Get Reports via Gateway (ADMIN only)
+GET {{gateway}}/admin/reports
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### ============================================================
+### 5.C - SHIPMENT ENDPOINTS VIA GATEWAY
+### ============================================================
+
+### 5C.1 Create Shipment via Gateway (CUSTOMER only)
+POST {{gateway}}/shipments
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "senderName": "Gateway Sender",
+  "senderAddress": "789 Bridge St, Boston, MA 02101",
+  "senderPhone": "+1-555-7890",
+  "recipientName": "Gateway Recipient",
+  "recipientAddress": "321 Harbor Ave, Seattle, WA 98101",
+  "recipientPhone": "+1-555-9999",
+  "itemDescription": "Gateway Test Package",
+  "weight": 3.0,
+  "dimensions": "35x25x20 cm",
+  "estimatedValue": 750.00,
+  "serviceType": "OVERNIGHT"
+}
+
+### 5C.2 Get My Shipments via Gateway (CUSTOMER)
+GET {{gateway}}/shipments/my
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 5C.3 Get Specific Shipment via Gateway
+GET {{gateway}}/shipments/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 5C.4 Book Shipment via Gateway (CUSTOMER only)
+PUT {{gateway}}/shipments/{{sample_shipment_id}}/book
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 5C.5 Cancel Shipment via Gateway (CUSTOMER only)
+DELETE {{gateway}}/shipments/{{sample_shipment_id}}
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### 5C.6 Get All Shipments via Gateway (ADMIN only)
+GET {{gateway}}/shipments/admin/all
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+### 5C.7 Update Shipment Status via Gateway (ADMIN only)
+PUT {{gateway}}/shipments/{{sample_shipment_id}}/status
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "status": "IN_TRANSIT"
+}
+
+### ============================================================
+### 5.D - TRACKING ENDPOINTS VIA GATEWAY
+### ============================================================
+
+### 5D.1 Get Tracking Timeline via Gateway
+GET {{gateway}}/tracking/{{sample_shipment_id}}
+Content-Type: application/json
+
+### 5D.2 Update Shipment Status via Gateway
+PUT {{gateway}}/tracking/{{sample_shipment_id}}/status
+Content-Type: application/json
+
+{
+  "status": "PICKED_UP",
+  "location": "Main Distribution Center"
+}
+
+### 5D.3 Upload Document via Gateway (ADMIN only)
+POST {{gateway}}/tracking/{{sample_shipment_id}}/documents/upload
+Authorization: Bearer {{admin_token}}
+
+< ./sample-documents/sample-invoice.pdf
+
+### 5D.4 Get Documents via Gateway
+GET {{gateway}}/tracking/{{sample_shipment_id}}/documents
+Content-Type: application/json
+
+### 5D.5 Submit Delivery Proof via Gateway
+POST {{gateway}}/tracking/{{sample_shipment_id}}/delivery-proof
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="recipientName"
+
+Gateway Test Recipient
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="deliveryLocation"
+
+321 Harbor Ave, Seattle, WA 98101
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 5D.6 Get Delivery Proof via Gateway
+GET {{gateway}}/tracking/{{sample_shipment_id}}/delivery-proof
+Content-Type: application/json
+
+### ============================================================
+### 5.E - GATEWAY INFORMATION
+### ============================================================
+
+### 5E.1 Gateway Swagger UI (Browser)
+# Open: http://localhost:5166/swagger
+
+### 5E.2 Gateway Health Status
+GET {{gateway}}/
+Content-Type: application/json
+
+### 5E.3 Gateway Service Routing Info
+# The Gateway routes requests based on upstream path:
+# - /auth/* routes to Auth Service (http://localhost:5045/api/auth/*)
+# - /admin/* routes to Admin Service (http://localhost:5127/api/admin/*)
+# - /shipments/* routes to Shipment Service (http://localhost:5286/api/shipments/*)
+# - /tracking/* routes to Tracking Service (http://localhost:5062/api/tracking/*)
+
+### ============================================================
+### 6. COMPLETE WORKFLOW - END-TO-END TEST
+### ============================================================
+
+### Step 1: Register Customer
+POST {{auth_service}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "username": "workflow_customer",
+  "email": "workflow@smartship.com",
+  "password": "Workflow@123"
+}
+
+### Step 2: Login Customer
+POST {{auth_service}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "workflow_customer",
+  "password": "Workflow@123"
+}
+
+### Step 3: Create Shipment (use token from Step 2)
+POST {{shipment_service}}/api/shipments
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+{
+  "senderName": "Workflow Sender",
+  "senderAddress": "100 Main St, NYC, NY 10001",
+  "senderPhone": "+1-555-1111",
+  "recipientName": "Workflow Recipient",
+  "recipientAddress": "200 Park Ave, LA, CA 90001",
+  "recipientPhone": "+1-555-2222",
+  "itemDescription": "Test Package",
+  "weight": 1.5,
+  "dimensions": "25x15x10 cm",
+  "estimatedValue": 100.00,
+  "serviceType": "STANDARD"
+}
+
+### Step 4: Book Shipment (use shipment_id from Step 3)
+PUT {{shipment_service}}/api/shipments/{{sample_shipment_id}}/book
+Authorization: Bearer {{customer_token}}
+Content-Type: application/json
+
+### Step 5: Get Shipment Tracking
+GET {{tracking_service}}/api/tracking/{{sample_shipment_id}}
+Content-Type: application/json
+
+### Step 6: Update Tracking Status (Simulating delivery progress)
+PUT {{tracking_service}}/api/tracking/{{sample_shipment_id}}/status
+Content-Type: application/json
+
+{
+  "status": "PICKED_UP",
+  "location": "Pickup Center - NYC"
+}
+
+### Step 7: Further Status Updates
+PUT {{tracking_service}}/api/tracking/{{sample_shipment_id}}/status
+Content-Type: application/json
+
+{
+  "status": "IN_TRANSIT",
+  "location": "Regional Hub - Chicago"
+}
+
+### Step 8: Final Status - Out for Delivery
+PUT {{tracking_service}}/api/tracking/{{sample_shipment_id}}/status
+Content-Type: application/json
+
+{
+  "status": "OUT_FOR_DELIVERY",
+  "location": "Local Delivery Station - LA"
+}
+
+### Step 9: Delivery Proof Submission
+POST {{tracking_service}}/api/tracking/{{sample_shipment_id}}/delivery-proof
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="recipientName"
+
+Workflow Recipient
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="deliveryLocation"
+
+200 Park Ave, LA, CA 90001
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Step 10: Get Final Tracking Status
+GET {{tracking_service}}/api/tracking/{{sample_shipment_id}}
+Content-Type: application/json
+
+### ============================================================
+### 7. AUTHENTICATION NOTES
+### ============================================================
+
+# After logging in, extract the token from the response and set @auth_token
+# Most endpoints require : Authorization: Bearer {token}
+# 
+# User Roles:
+# - CUSTOMER: Create/manage their own shipments, view tracking
+# - ADMIN: Access all admin endpoints, manage users, resolve issues
+#
+# Protected Routes:
+# - Auth Service: /admin/* (ADMIN only)
+# - Admin Service: ALL endpoints (ADMIN only)
+# - Shipment Service: /admin/* (ADMIN only), POST/PUT/DELETE (CUSTOMER own)
+# - Tracking Service: /documents/upload (ADMIN only)
+
+### ============================================================
+### 8. STATUS VALUES & TRANSITIONS
+### ============================================================
+
+# Valid Shipment Status Values:
+# - DRAFT: Initial state after creation
+# - BOOKED: Confirmed ready for pickup
+# - PICKED_UP: Collected from sender
+# - IN_TRANSIT: In the delivery network
+# - OUT_FOR_DELIVERY: With delivery agent
+# - DELIVERED: Successfully delivered
+#
+# Status Transition Rules:
+# DRAFT -> BOOKED (Book Shipment endpoint)
+# BOOKED -> PICKED_UP -> IN_TRANSIT -> OUT_FOR_DELIVERY -> DELIVERED
+# DRAFT/BOOKED -> CANCELLED (Cancel Shipment endpoint)
+
+### ============================================================
+### 9. ERROR CODES & MEANINGS
+### ============================================================
+
+# 200 OK - Request successful
+# 201 Created - Resource created successfully
+# 400 Bad Request - Invalid input parameters
+# 401 Unauthorized - Missing or invalid token
+# 403 Forbidden - Insufficient permissions for resource
+# 404 Not Found - Resource not found
+# 500 Internal Server Error - Server error
+
+### ============================================================
+### 11. GATEWAY vs DIRECT SERVICE - ENDPOINT MAPPING
+### ============================================================
+
+# GATEWAY URL PATTERN              DIRECT SERVICE URL PATTERN
+# 
+# Auth Service Routes:
+# POST {{gateway}}/auth/login       POST {{auth_service}}/api/auth/login
+# POST {{gateway}}/auth/signup      POST {{auth_service}}/api/auth/signup
+# GET {{gateway}}/auth/admin/users  GET {{auth_service}}/api/auth/admin/users
+#
+# Admin Service Routes:
+# GET {{gateway}}/admin/dashboard   GET {{admin_service}}/api/admin/dashboard
+# GET {{gateway}}/admin/shipments   GET {{admin_service}}/api/admin/shipments
+# PUT {{gateway}}/admin/users/{id}  PUT {{admin_service}}/api/admin/users/{id}
+#
+# Shipment Service Routes:
+# POST {{gateway}}/shipments        POST {{shipment_service}}/api/shipments
+# GET {{gateway}}/shipments/my      GET {{shipment_service}}/api/shipments/my
+# PUT {{gateway}}/shipments/{id}    PUT {{shipment_service}}/api/shipments/{id}
+#
+# Tracking Service Routes:
+# GET {{gateway}}/tracking/{id}     GET {{tracking_service}}/api/tracking/{id}
+# POST {{gateway}}/tracking/{id}/status  PUT {{tracking_service}}/api/tracking/{id}/status
+
+### ============================================================
+### 12. GATEWAY ADVANTAGES & USE CASES
+### ============================================================
+
+# ✅ WHY USE GATEWAY ENDPOINTS:
+#
+# 1. UNIFIED ENTRY POINT
+#    - Single URL for all microservices
+#    - Client doesn't need to know individual service ports
+#    - Easier load balancing
+#
+# 2. CENTRALIZED AUTHENTICATION
+#    - JWT validation at gateway level
+#    - Reduced auth logic in individual services
+#    - Single point for token refresh
+#
+# 3. CROSS-CUTTING CONCERNS
+#    - Logging at gateway level
+#    - Rate limiting enforcement
+#    - Request/response transformation
+#
+# 4. SERVICE DISCOVERY
+#    - Services can change ports without client updates
+#    - Gateway configuration centralized (ocelot.json)
+#
+# 5. API VERSIONING
+#    - Easy to version entire API
+#    - Can deprecate legacy endpoints gracefully
+#
+# 6. PRODUCTION DEPLOYMENT
+#    - Services behind gateway not directly exposed
+#    - Better security posture
+#    - Easier to implement WAF (Web Application Firewall)
+
+### ============================================================
+### 13. TESTING WORKFLOW - GATEWAY FIRST APPROACH
+### ============================================================
+
+# RECOMMENDED TESTING ORDER:
+#
+# 1. Direct Service Test (Verify service works independently)
+#    - Test: POST {{auth_service}}/api/auth/login
+#    - Purpose: Ensure service is running
+#
+# 2. Gateway Test (Verify gateway routing)
+#    - Test: POST {{gateway}}/auth/login
+#    - Purpose: Ensure Ocelot routing is working
+#
+# 3. Authentication Flow (Test token generation)
+#    - Test: POST {{gateway}}/auth/login
+#    - Extract token and save to @auth_token
+#
+# 4. Protected Routes (Test authorization)
+#    - Test: GET {{gateway}}/admin/dashboard
+#    - Header: Authorization: Bearer {{auth_token}}
+#    - Purpose: Verify JWT validation at gateway
+#
+# 5. Full Workflow (Integration test)
+#    - Test: Complete workflow from Steps 1-10 using gateway URLs
+
+### ============================================================
+### 14. COMMON GATEWAY TESTING SCENARIOS
+### ============================================================
+
+# SCENARIO 1: Test Gateway Routing
+# - Hit Gateway endpoint
+# - Verify response matches direct service response
+# - Check Ocelot routing logs
+#
+# SCENARIO 2: Test Token Propagation
+# - Get token via Gateway
+# - Use token on protected Gateway endpoint
+# - Verify authorization works across gateway
+#
+# SCENARIO 3: Test Cross-Service Workflows
+# - Create Shipment via Gateway (goes to Shipment Service)
+# - Track Shipment via Gateway (goes to Tracking Service)
+# - View Shipment in Admin via Gateway (goes to Admin Service)
+# - Verify all services have consistent data
+#
+# SCENARIO 4: Test Gateway Failure Scenarios
+# - Stop one microservice
+# - Try hitting that service through Gateway
+# - Verify gateway returns appropriate error
+# - Restart service and verify recovery
+#
+# SCENARIO 5: Performance Testing
+# - Compare response time direct service vs gateway
+# - Measure gateway overhead
+# - Identify bottlenecks
+
+### ============================================================
+### 15. TESTING CHECKLIST
+### ============================================================
+
+# DIRECT SERVICE TESTS:
+# [ ] 1.1 Register via Auth Service direct
+# [ ] 1.3 Login via Auth Service direct
+# [ ] 3.1 Create Shipment via Shipment Service direct
+# [ ] 4.1 Get Tracking via Tracking Service direct
+#
+# GATEWAY ROUTING TESTS:
+# [ ] 5A.1 Register via Gateway
+# [ ] 5A.2 Login via Gateway
+# [ ] 5B.1 Dashboard via Gateway
+# [ ] 5C.1 Create Shipment via Gateway
+# [ ] 5D.1 Get Tracking via Gateway
+#
+# GATEWAY AUTHORIZATION TESTS:
+# [ ] 5A.5 Get Users (with ADMIN token via Gateway)
+# [ ] 5B.1 Dashboard (with ADMIN token via Gateway)
+# [ ] 5C.6 Get All Shipments (with ADMIN token via Gateway)
+#
+# GATEWAY FULL WORKFLOW:
+# [ ] Step 1: Register via Gateway
+# [ ] Step 2: Login via Gateway
+# [ ] Step 3: Create Shipment via Gateway
+# [ ] Step 4: Book Shipment via Gateway
+# [ ] Step 5: Get Tracking via Gateway
+# [ ] Step 6-8: Update Status via Gateway
+# [ ] Step 9: Submit POD via Gateway
+# [ ] Step 10: Verify via Gateway
