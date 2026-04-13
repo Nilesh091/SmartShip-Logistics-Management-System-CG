@@ -7,6 +7,7 @@ namespace TrackingService.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TrackingController : ControllerBase
 {
   private readonly ITrackingService _trackingService;
@@ -42,7 +43,19 @@ public class TrackingController : ControllerBase
     }
     catch (Exception ex)
     {
-      _logger.LogError(ex, "Error retrieving tracking for shipment {ShipmentId}", shipmentId);
+      _logger.LogError(ex, "Error retrieving tracking for shipment {ShipmentId}. Exception: {ExceptionMessage}", shipmentId, ex.Message);
+
+      // Return detailed error in development, generic error in production
+      if (System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+      {
+        return StatusCode(500, new
+        {
+          message = "Error retrieving tracking information",
+          error = ex.Message,
+          innerError = ex.InnerException?.Message
+        });
+      }
+
       return StatusCode(500, new { message = "Error retrieving tracking information" });
     }
   }

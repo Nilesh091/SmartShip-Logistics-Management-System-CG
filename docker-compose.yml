@@ -1,0 +1,123 @@
+services:
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: smartship-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - smartship-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Auth Service
+  authservice:
+    build:
+      context: .
+      dockerfile: Services/AuthService/Dockerfile
+    container_name: smartship-auth
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Server=host.docker.internal,1433;Database=SmartLogisticsAuthServiceDb;User Id=sa;Password=2004@Nilu;TrustServerCertificate=True;
+    networks:
+      - smartship-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+  # Admin Service
+  adminservice:
+    build:
+      context: .
+      dockerfile: Services/AdminService/Dockerfile
+    container_name: smartship-admin
+    ports:
+      - "5002:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Services__ShipmentService: http://shipmentservice:8080
+      Services__AuthService: http://authservice:8080
+    networks:
+      - smartship-network
+    depends_on:
+      authservice:
+        condition: service_started
+      shipmentservice:
+        condition: service_started
+    restart: on-failure
+
+  # Shipment Service
+  shipmentservice:
+    build:
+      context: .
+      dockerfile: Services/ShipmentService/Dockerfile
+    container_name: smartship-shipment
+    ports:
+      - "5003:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Server=host.docker.internal,1433;Database=SmartLogisticsShipmentServiceDb;User Id=sa;Password=2004@Nilu;TrustServerCertificate=True;
+      RabbitMQ__HostName: rabbitmq
+    networks:
+      - smartship-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+  # Tracking Service
+  trackingservice:
+    build:
+      context: .
+      dockerfile: Services/TrackingService/Dockerfile
+    container_name: smartship-tracking
+    ports:
+      - "5004:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Server=host.docker.internal,1433;Database=SmartLogisticTrackingService;User Id=sa;Password=2004@Nilu;TrustServerCertificate=True;
+      RabbitMQ__HostName: rabbitmq
+    networks:
+      - smartship-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
+  # API Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    container_name: smartship-gateway
+    ports:
+      - "5166:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    networks:
+      - smartship-network
+    depends_on:
+      authservice:
+        condition: service_started
+      adminservice:
+        condition: service_started
+      shipmentservice:
+        condition: service_started
+      trackingservice:
+        condition: service_started
+    restart: on-failure
+
+networks:
+  smartship-network:
+    driver: bridge

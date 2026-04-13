@@ -10,6 +10,7 @@ using ShipmentService.Infrastructure.Repositories;
 
 using System.Text;
 using TrackingService.Infrastructure.Messaging;
+using Shared.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,7 +95,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     ?? "Server=.;Database=ShipmentServiceDb;Integrated Security=true;TrustServerCertificate=true;";
 
 builder.Services.AddDbContext<ShipmentDbContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null);
+    })
 );
 
 // Add JWT Authentication
@@ -102,7 +109,7 @@ var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-security");
 var issuer = jwtSettings["Issuer"] ?? "AuthService";
 var audience = jwtSettings["Audience"] ?? "AuthServiceAPI";
-
+builder.Host.ConfigureSerilog("ShipmentService");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

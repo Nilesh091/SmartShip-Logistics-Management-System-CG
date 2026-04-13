@@ -1,0 +1,38 @@
+# .dockerignore
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build outputs
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# IDE
+.vs/
+.vscode/
+*.sln.DotSettings
+*.user
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Testing
+*.trx
+coverage/
+
+# Misc
+.env
+.env.local
+*.log
+*.bak
+README.md
+*.md
+node_modules/
+dist/

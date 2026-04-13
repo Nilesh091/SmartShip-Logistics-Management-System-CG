@@ -8,7 +8,8 @@
         { "Host": "localhost", "Port": 5045 }
       ],
       "UpstreamPathTemplate": "/auth/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+       "SwaggerKey": "auth"
     },
 
 
@@ -23,7 +24,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
-      }
+      },
+      "SwaggerKey": "admin"
+
     },
 
 
@@ -38,7 +41,8 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
-      }
+      },  
+      "SwaggerKey": "tracking"
     },
 
 
@@ -53,10 +57,52 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
-      }
+      },
+      "SwaggerKey": "shipment"
     }
   ],
-
+"SwaggerEndPoints": [
+  {
+    "Key": "auth",
+    "Config": [
+      {
+        "Name": "Auth Service",
+        "Version": "v1",
+        "Url": "http://localhost:5045/swagger/v1/swagger.json"
+      }
+    ]
+  },
+  {
+    "Key": "admin",
+    "Config": [
+      {
+        "Name": "Admin Service",
+        "Version": "v1",
+        "Url": "http://localhost:5127/swagger/v1/swagger.json"
+      }
+    ]
+  },
+  {
+    "Key": "tracking",
+    "Config": [
+      {
+        "Name": "Tracking Service",
+        "Version": "v1",
+        "Url": "http://localhost:5062/swagger/v1/swagger.json"
+      }
+    ]
+  },
+  {
+    "Key": "shipment",
+    "Config": [
+      {
+        "Name": "Shipment Service",
+        "Version": "v1",
+        "Url": "http://localhost:5286/swagger/v1/swagger.json"
+      }
+    ]
+  }
+],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:5166"
   }

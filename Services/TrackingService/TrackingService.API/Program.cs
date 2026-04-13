@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TrackingService.Application.Repositories.Interfaces;
 using TrackingService.Application.Services.Interfaces;
 using TrackingService.Application.Services.Implementations;
@@ -7,12 +9,21 @@ using TrackingService.Infrastructure.Data;
 using TrackingService.Infrastructure.Storage;
 using TrackingService.Infrastructure.Services;
 using TrackingService.Infrastructure.Messaging;
-
+using Shared.Logs;
 var builder = WebApplication.CreateBuilder(args);
 
 // DB
 builder.Services.AddDbContext<TrackingDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null);
+    }));
+
+// Logging
+builder.Host.ConfigureSerilog("TrackingService");
 
 // DI
 builder.Services.AddScoped<ITrackingRepository, TrackingRepository>();
@@ -24,6 +35,25 @@ builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IDeliveryProofService, DeliveryProofService>();
 
 builder.Services.AddControllers();
+
+// JWT Authentication
+builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
+{
+    var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-secret-key-here-change-in-production";
+    var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "AuthService";
+    var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "AuthServiceAPI";
+
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtIssuer,
+        ValidateAudience = true,
+        ValidAudience = jwtAudience,
+        ValidateLifetime = true,
+        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+            System.Text.Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
 
 // Swagger/OpenAPI
 builder.Services.AddSwaggerGen(options =>
@@ -66,6 +96,13 @@ builder.Services.AddHostedService<RabbitMqConsumer>();
 
 var app = builder.Build();
 
+// Auto-migrate database on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TrackingDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -73,6 +110,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

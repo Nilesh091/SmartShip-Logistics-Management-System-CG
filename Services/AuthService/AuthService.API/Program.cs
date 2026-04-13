@@ -8,7 +8,7 @@ using AuthService.Infrastructure.Data;
 using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
-
+using Shared.Logs;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
@@ -28,7 +28,13 @@ builder.Services.AddSwaggerGen(options =>
 // Configure Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null);
+    })
 );
 
 // Register Repositories
@@ -55,7 +61,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
+builder.Host.ConfigureSerilog("AuthService");
 // Register Application Services
 builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();

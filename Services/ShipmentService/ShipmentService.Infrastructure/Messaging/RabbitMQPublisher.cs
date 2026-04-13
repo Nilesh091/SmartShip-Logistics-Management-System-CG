@@ -1,19 +1,26 @@
-using System;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 using ShipmentService.Application.Repositories;
+using Microsoft.Extensions.Configuration;
+
 namespace TrackingService.Infrastructure.Messaging
 {
     public class RabbitMQPublisher : IRabbitMQPublisher
     {
         private readonly ConnectionFactory _factory;
 
-        public RabbitMQPublisher()
+        public RabbitMQPublisher(IConfiguration configuration)
         {
+            var host = configuration["RabbitMQ:HostName"];
+
+            Console.WriteLine($"🔥 RabbitMQ Host from config: {host}");
+
             _factory = new ConnectionFactory()
             {
-                HostName = "localhost"
+                HostName = host,
+                UserName = "guest",
+                Password = "guest"
             };
         }
 
