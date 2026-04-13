@@ -7,9 +7,8 @@ using ShipmentService.Application.Services;
 using ShipmentService.Application.Repositories;
 using ShipmentService.Infrastructure.Persistence;
 using ShipmentService.Infrastructure.Repositories;
-
 using System.Text;
-using TrackingService.Infrastructure.Messaging;
+using Shared.Messaging;
 using Shared.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -141,9 +140,22 @@ builder.Services.AddLogging(config =>
     config.AddConsole();
     config.AddDebug();
 });
-builder.Services.AddScoped<IRabbitMQPublisher, RabbitMQPublisher>();
+builder.Services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
 
 var app = builder.Build();
+
+// Initialize RabbitMQ publisher
+try
+{
+    using var scope = app.Services.CreateScope();
+    var publisher = scope.ServiceProvider.GetRequiredService<IRabbitMQPublisher>();
+    await publisher.InitializeAsync();
+}
+catch (Exception ex)
+{
+    app.Logger.LogError(ex, "Failed to initialize RabbitMQ publisher");
+    throw;
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

@@ -28,6 +28,9 @@
             "projectReferences": {
               "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/ShipmentService.Domain.csproj": {
                 "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/ShipmentService.Domain.csproj"
+              },
+              "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj": {
+                "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj"
               }
             }
           }

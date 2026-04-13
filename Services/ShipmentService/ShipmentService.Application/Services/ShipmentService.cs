@@ -3,9 +3,9 @@ using ShipmentService.Application.Repositories;
 using ShipmentService.Domain.Entities;
 using ShipmentService.Domain.Enums;
 using ShipmentService.Domain.Events;
-
 namespace ShipmentService.Application.Services;
 
+using Shared.Messaging;
 public class ShipmentService : IShipmentService
 {
   private readonly IShipmentRepository _repository;
@@ -44,7 +44,7 @@ public class ShipmentService : IShipmentService
     };
 
     var shipmentId = await _repository.AddAsync(shipment);
-    _publisher.Publish("shipment-created", new ShipmentCreatedEvent
+    await _publisher.PublishAsync("shipment-created", new ShipmentCreatedEvent
     {
       ShipmentId = shipment.Id,
       UserId = shipment.UserId,
@@ -79,7 +79,7 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = ShipmentStatus.Booked;
-    _publisher.Publish("shipment-status-updated", new ShipmentStatusUpdatedEvent
+    await _publisher.PublishAsync("shipment-status-updated", new ShipmentStatusUpdatedEvent
     {
       ShipmentId = shipment.Id,
       Status = shipment.Status,
@@ -98,7 +98,7 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = status;
-    _publisher.Publish("shipment-status-updated", new ShipmentStatusUpdatedEvent
+    await _publisher.PublishAsync("shipment-status-updated", new ShipmentStatusUpdatedEvent
     {
       ShipmentId = shipment.Id,
       Status = shipment.Status,
