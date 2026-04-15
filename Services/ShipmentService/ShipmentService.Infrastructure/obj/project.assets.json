@@ -1341,7 +1341,7 @@
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "Microsoft.Extensions.Hosting": "10.0.5",
-          "RabbitMQ.Client": "7.2.1",
+          "RabbitMQ.Client": "6.6.0",
           "Serilog": "4.3.1",
           "Serilog.AspNetCore": "10.0.0",
           "Serilog.Sinks.Console": "6.1.1",
@@ -3636,16 +3636,5 @@
         }
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1605",
-      "level": "Error",
-      "message": "Warning As Error: Detected package downgrade: RabbitMQ.Client from 7.2.1 to 6.6.0. Reference the package directly from the project to select a different version. \n ShipmentService.Infrastructure -> Shared -> RabbitMQ.Client (>= 7.2.1) \n ShipmentService.Infrastructure -> RabbitMQ.Client (>= 6.6.0)",
-      "libraryId": "RabbitMQ.Client",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  }
 }

@@ -44,7 +44,7 @@ public class ShipmentService : IShipmentService
     };
 
     var shipmentId = await _repository.AddAsync(shipment);
-    await _publisher.PublishAsync("shipment-created", new ShipmentCreatedEvent
+    _publisher.Publish("shipment-created", new ShipmentCreatedEvent
     {
       ShipmentId = shipment.Id,
       UserId = shipment.UserId,
@@ -79,7 +79,7 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = ShipmentStatus.Booked;
-    await _publisher.PublishAsync("shipment-status-updated", new ShipmentStatusUpdatedEvent
+    _publisher.Publish("shipment-status-updated", new ShipmentStatusUpdatedEvent
     {
       ShipmentId = shipment.Id,
       Status = shipment.Status,
@@ -98,7 +98,7 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = status;
-    await _publisher.PublishAsync("shipment-status-updated", new ShipmentStatusUpdatedEvent
+    _publisher.Publish("shipment-status-updated", new ShipmentStatusUpdatedEvent
     {
       ShipmentId = shipment.Id,
       Status = shipment.Status,

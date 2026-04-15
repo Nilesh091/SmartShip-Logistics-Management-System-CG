@@ -145,18 +145,6 @@ builder.Services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
 var app = builder.Build();
 
 // Initialize RabbitMQ publisher
-try
-{
-    using var scope = app.Services.CreateScope();
-    var publisher = scope.ServiceProvider.GetRequiredService<IRabbitMQPublisher>();
-    await publisher.InitializeAsync();
-}
-catch (Exception ex)
-{
-    app.Logger.LogError(ex, "Failed to initialize RabbitMQ publisher");
-    throw;
-}
-
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {

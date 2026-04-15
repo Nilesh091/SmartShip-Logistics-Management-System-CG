@@ -8,8 +8,9 @@ using TrackingService.Application.Services.Implementations;
 using TrackingService.Infrastructure.Data;
 using TrackingService.Infrastructure.Storage;
 using TrackingService.Infrastructure.Services;
-using TrackingService.Infrastructure.Messaging;
 using Shared.Logs;
+using Shared.Messaging;
+using TrackingService.Application.EventHandlers;
 var builder = WebApplication.CreateBuilder(args);
 
 // DB
@@ -92,16 +93,10 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddHostedService<RabbitMqConsumer>();
+builder.Services.AddScoped<IEventDispatcher, TrackingEventDispatcher>();
 
 
 var app = builder.Build();
-
-// Auto-migrate database on startup
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<TrackingDbContext>();
-    db.Database.Migrate();
-}
 
 if (app.Environment.IsDevelopment())
 {

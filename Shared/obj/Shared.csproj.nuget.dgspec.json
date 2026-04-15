@@ -50,7 +50,7 @@
             },
             "RabbitMQ.Client": {
               "target": "Package",
-              "version": "[7.2.1, )"
+              "version": "[6.6.0, )"
             },
             "Serilog": {
               "target": "Package",

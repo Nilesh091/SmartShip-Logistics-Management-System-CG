@@ -7,10 +7,10 @@ using RabbitMQ.Client;
 
 namespace Shared.Messaging
 {
-    public class RabbitMQPublisher : IRabbitMQPublisher, IAsyncDisposable
+    public class RabbitMQPublisher : IRabbitMQPublisher, IDisposable
     {
         private IConnection _connection;
-        private IChannel _channel;
+        private IModel _channel;
         private readonly IConfiguration _configuration;
         private readonly ILogger<RabbitMQPublisher> _logger;
 
@@ -18,13 +18,15 @@ namespace Shared.Messaging
         {
             _logger = logger;
             _configuration = configuration;
+
+            Initialize(); // sync init
         }
 
-        public async Task InitializeAsync()
+        private void Initialize()
         {
             try
             {
-                var hostName = _configuration["RabbitMQ:HostName"] ?? "localhost";
+                var hostName = _configuration["RabbitMQ:HostName"] ?? "rabbitmq";
                 var userName = _configuration["RabbitMQ:UserName"] ?? "guest";
                 var password = _configuration["RabbitMQ:Password"] ?? "guest";
 
@@ -35,8 +37,8 @@ namespace Shared.Messaging
                     Password = password
                 };
 
-                _connection = await factory.CreateConnectionAsync();
-                _channel = await _connection.CreateChannelAsync();
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
 
                 _logger.LogInformation("RabbitMQ connection established successfully");
             }
@@ -47,7 +49,7 @@ namespace Shared.Messaging
             }
         }
 
-        public async Task PublishAsync<T>(string queue, T message)
+        public void Publish<T>(string queue, T message)
         {
             if (string.IsNullOrWhiteSpace(queue))
                 throw new ArgumentException("Queue name cannot be null or empty", nameof(queue));
@@ -57,26 +59,32 @@ namespace Shared.Messaging
 
             try
             {
-                // Ensure connection is initialized
-                if (_channel == null || !_channel.IsOpen)
+                // Ensure connection is alive
+                if (_channel == null || _channel.IsClosed)
                 {
-                    await InitializeAsync();
+                    Initialize();
                 }
 
                 // Declare queue
-                await _channel.QueueDeclareAsync(queue, durable: true, exclusive: false, autoDelete: false);
+                _channel.QueueDeclare(
+                    queue: queue,
+                    durable: true,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null
+                );
 
                 // Serialize message
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
-                // Create properties (no separate Properties class needed in v7)
-                var properties = new BasicProperties { Persistent = true };
+                // Properties (persistent message)
+                var properties = _channel.CreateBasicProperties();
+                properties.Persistent = true;
 
-                // Publish message using correct v7 API
-                await _channel.BasicPublishAsync(
+                // Publish
+                _channel.BasicPublish(
                     exchange: "",
                     routingKey: queue,
-                    mandatory: false,
                     basicProperties: properties,
                     body: body
                 );
@@ -90,15 +98,15 @@ namespace Shared.Messaging
             }
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
             try
             {
-                if (_channel?.IsOpen == true)
-                    await _channel.CloseAsync();
+                if (_channel != null && _channel.IsOpen)
+                    _channel.Close();
 
-                if (_connection?.IsOpen == true)
-                    await _connection.CloseAsync();
+                if (_connection != null && _connection.IsOpen)
+                    _connection.Close();
 
                 _channel?.Dispose();
                 _connection?.Dispose();

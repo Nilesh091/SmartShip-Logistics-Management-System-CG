@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="../../../Shared/Shared.csproj" />
     <ProjectReference Include="..\TrackingService.Domain\TrackingService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EventHandlers/" />
   </ItemGroup>
 
   <PropertyGroup>

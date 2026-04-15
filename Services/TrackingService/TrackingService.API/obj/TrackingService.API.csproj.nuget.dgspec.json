@@ -553,6 +553,9 @@
             "projectReferences": {
               "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Domain/TrackingService.Domain.csproj": {
                 "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Domain/TrackingService.Domain.csproj"
+              },
+              "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj": {
+                "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj"
               }
             }
           }
@@ -1624,7 +1627,7 @@
             },
             "RabbitMQ.Client": {
               "target": "Package",
-              "version": "[7.2.1, )"
+              "version": "[6.6.0, )"
             },
             "Serilog": {
               "target": "Package",

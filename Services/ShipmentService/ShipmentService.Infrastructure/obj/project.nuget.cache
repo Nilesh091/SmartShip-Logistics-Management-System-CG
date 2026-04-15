@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "sgC5kJgkLXE=",
-  "success": false,
+  "dgSpecHash": "Btehq3jr0EQ=",
+  "success": true,
   "projectFilePath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Infrastructure/ShipmentService.Infrastructure.csproj",
   "expectedPackageFiles": [
     "/Users/nrs/.nuget/packages/azure.core/1.47.1/azure.core.1.47.1.nupkg.sha512",
@@ -73,17 +73,5 @@
     "/Users/nrs/.nuget/packages/system.security.cryptography.pkcs/9.0.4/system.security.cryptography.pkcs.9.0.4.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.security.cryptography.protecteddata/9.0.4/system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1605",
-      "level": "Error",
-      "message": "Warning As Error: Detected package downgrade: RabbitMQ.Client from 7.2.1 to 6.6.0. Reference the package directly from the project to select a different version. \n ShipmentService.Infrastructure -> Shared -> RabbitMQ.Client (>= 7.2.1) \n ShipmentService.Infrastructure -> RabbitMQ.Client (>= 6.6.0)",
-      "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Infrastructure/ShipmentService.Infrastructure.csproj",
-      "filePath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Infrastructure/ShipmentService.Infrastructure.csproj",
-      "libraryId": "RabbitMQ.Client",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

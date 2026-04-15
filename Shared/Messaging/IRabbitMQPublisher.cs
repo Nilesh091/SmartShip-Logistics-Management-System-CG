@@ -4,7 +4,6 @@ namespace Shared.Messaging
 {
     public interface IRabbitMQPublisher
     {
-        Task PublishAsync<T>(string queue, T message);
-        Task InitializeAsync();
+        void Publish<T>(string queue, T message);
     }
 }

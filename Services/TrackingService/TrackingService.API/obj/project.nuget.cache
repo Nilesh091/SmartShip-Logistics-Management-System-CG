@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "vKH/EYb/ybs=",
-  "success": false,
+  "dgSpecHash": "SHQk4eMTIrU=",
+  "success": true,
   "projectFilePath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.API/TrackingService.API.csproj",
   "expectedPackageFiles": [
     "/Users/nrs/.nuget/packages/azure.core/1.47.1/azure.core.1.47.1.nupkg.sha512",
@@ -80,17 +80,5 @@
     "/Users/nrs/.nuget/packages/system.security.permissions/9.0.0/system.security.permissions.9.0.0.nupkg.sha512",
     "/Users/nrs/.nuget/packages/system.windows.extensions/9.0.0/system.windows.extensions.9.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1605",
-      "level": "Error",
-      "message": "Warning As Error: Detected package downgrade: RabbitMQ.Client from 7.2.1 to 6.6.0. Reference the package directly from the project to select a different version. \n TrackingService.API -> TrackingService.Infrastructure -> Shared -> RabbitMQ.Client (>= 7.2.1) \n TrackingService.API -> TrackingService.Infrastructure -> RabbitMQ.Client (>= 6.6.0)",
-      "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.API/TrackingService.API.csproj",
-      "filePath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.API/TrackingService.API.csproj",
-      "libraryId": "RabbitMQ.Client",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Izf+7ANcm34=",
+  "dgSpecHash": "V+4c/j6rc6Y=",
   "success": true,
   "projectFilePath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.API/AdminService.API.csproj",
   "expectedPackageFiles": [
@@ -14,7 +14,7 @@
     "/Users/nrs/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/8.0.1/microsoft.identitymodel.protocols.openidconnect.8.0.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.identitymodel.tokens/8.17.0/microsoft.identitymodel.tokens.8.17.0.nupkg.sha512",
     "/Users/nrs/.nuget/packages/microsoft.openapi/1.6.23/microsoft.openapi.1.6.23.nupkg.sha512",
-    "/Users/nrs/.nuget/packages/rabbitmq.client/7.2.1/rabbitmq.client.7.2.1.nupkg.sha512",
+    "/Users/nrs/.nuget/packages/rabbitmq.client/6.6.0/rabbitmq.client.6.6.0.nupkg.sha512",
     "/Users/nrs/.nuget/packages/serilog/4.3.1/serilog.4.3.1.nupkg.sha512",
     "/Users/nrs/.nuget/packages/serilog.aspnetcore/10.0.0/serilog.aspnetcore.10.0.0.nupkg.sha512",
     "/Users/nrs/.nuget/packages/serilog.enrichers.environment/3.0.1/serilog.enrichers.environment.3.0.1.nupkg.sha512",
