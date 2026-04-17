@@ -12,7 +12,7 @@ namespace Shared.Logs
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("Service", serviceName)
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:8081") // fix port
+                .WriteTo.Seq("http://host.docker.internal:8081")
                 .CreateLogger();
 
             return host.UseSerilog();
