@@ -44,6 +44,7 @@ namespace Shared.Messaging
 
             _channel.QueueDeclare("shipment-created", durable: true, exclusive: false, autoDelete: false);
             _channel.QueueDeclare("shipment-status-updated", durable: true, exclusive: false, autoDelete: false);
+            _channel.QueueDeclare("otp-generated", durable: true, exclusive: false, autoDelete: false);
 
             var consumer = new EventingBasicConsumer(_channel);
 
@@ -60,7 +61,7 @@ namespace Shared.Messaging
 
             _channel.BasicConsume("shipment-created", true, consumer);
             _channel.BasicConsume("shipment-status-updated", true, consumer);
-
+            _channel.BasicConsume("otp-generated", true, consumer);
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
     }

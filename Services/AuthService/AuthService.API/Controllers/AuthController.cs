@@ -22,7 +22,7 @@ namespace AuthService.API.Controllers
       try
       {
         var result = await _authService.Register(dto);
-        return Ok(result);
+        return Ok(new { message = result.AccessToken, status = "OTP sent to email" });
       }
       catch (Exception ex)
       {
@@ -36,7 +36,21 @@ namespace AuthService.API.Controllers
       try
       {
         var result = await _authService.Login(dto);
-        return Ok(result);
+        return Ok(new { message = result, status = "OTP sent to email" });
+      }
+      catch (Exception ex)
+      {
+        return Unauthorized(new { message = ex.Message });
+      }
+    }
+
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp(VerifyOtpDto dto)
+    {
+      try
+      {
+        var result = await _authService.VerifyOtp(dto);
+        return Ok(new { success = true, message = "OTP verified successfully", data = result });
       }
       catch (Exception ex)
       {

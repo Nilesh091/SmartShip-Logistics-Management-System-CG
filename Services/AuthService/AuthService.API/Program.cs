@@ -9,6 +9,7 @@ using AuthService.Infrastructure.Repositories;
 using AuthService.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Shared.Logs;
+using Shared.Messaging;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
@@ -40,6 +41,8 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 // Register Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
+builder.Services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
 
 // Configure JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];

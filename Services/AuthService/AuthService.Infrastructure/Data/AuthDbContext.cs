@@ -9,7 +9,7 @@ namespace AuthService.Infrastructure.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-
+        public DbSet<OtpCode> OtpCodes { get; set; }
         public AuthDbContext(DbContextOptions<AuthDbContext> options)
             : base(options) { }
 

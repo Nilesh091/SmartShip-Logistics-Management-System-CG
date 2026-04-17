@@ -16,3 +16,5 @@
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Infrastructure/obj/Debug/net10.0/refint/AuthService.Infrastructure.dll
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Infrastructure/obj/Debug/net10.0/AuthService.Infrastructure.pdb
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Infrastructure/obj/Debug/net10.0/ref/AuthService.Infrastructure.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Infrastructure/bin/Debug/net10.0/Shared.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Infrastructure/bin/Debug/net10.0/Shared.pdb

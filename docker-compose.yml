@@ -95,6 +95,32 @@ services:
         condition: service_healthy
     restart: on-failure
 
+  # Notification Service (Email & RabbitMQ Consumer)
+  notificationservice:
+    build:
+      context: .
+      dockerfile: Services/NotificationService/Dockerfile
+    container_name: smartship-notification
+    ports:
+      - "5005:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
+      Smtp__Host: smtp.gmail.com
+      Smtp__Port: 587
+      Smtp__Username: vivek250500@gmail.com
+      Smtp__Password: ugsg nzcc sumd eteb
+      Smtp__FromEmail: vivek250500@gmail.com
+      Smtp__FromName: SmartShip Notifications
+    networks:
+      - smartship-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: on-failure
+
   # API Gateway
   gateway:
     build:
@@ -115,6 +141,8 @@ services:
       shipmentservice:
         condition: service_started
       trackingservice:
+        condition: service_started
+      notificationservice:
         condition: service_started
     restart: on-failure
 

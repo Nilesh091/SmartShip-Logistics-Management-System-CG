@@ -562,6 +562,9 @@
             "projectReferences": {
               "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Domain/AuthService.Domain.csproj": {
                 "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AuthService/AuthService.Domain/AuthService.Domain.csproj"
+              },
+              "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj": {
+                "projectPath": "/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Shared/Shared.csproj"
               }
             }
           }
