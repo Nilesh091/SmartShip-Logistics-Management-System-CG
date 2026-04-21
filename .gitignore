@@ -1,0 +1,100 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Build Results
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+
+# Visual Studio
+.vs/
+.vscode/
+*.sln.docstates
+*.user
+*.userosscache
+*.sln.user
+*.suo
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Rider
+.idea/
+*.sln.iml
+*.iml
+
+# ReSharper
+_ReSharper*/
+*.resharper
+*.resharper.user
+*.ReSharper.user
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Package Manager
+packages/
+.paket/paket.exe
+paket-files/
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+
+# Build Folders
+/publish/
+/PublishProfiles/
+
+# Entity Framework
+Migrations/
+
+# Runtime
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+
+# IDE Plugins
+.idea/
+*.iws
+*.ipr
