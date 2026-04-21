@@ -10,7 +10,12 @@ using AuthService.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Shared.Logs;
 using Shared.Messaging;
+using DotNetEnv;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Load .env file at startup
+DotNetEnv.Env.Load();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -28,10 +33,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Configure Database
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "2004@Nilu"; // fallback to .env value
+connectionString = string.Format(connectionString, dbPassword);
+
 builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
+    options.UseSqlServer(connectionString)
 );
 // Register Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();

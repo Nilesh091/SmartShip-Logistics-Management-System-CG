@@ -1,0 +1,16 @@
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/bin/Debug/net10.0/AdminService.Application.deps.json
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/bin/Debug/net10.0/AdminService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/bin/Debug/net10.0/AdminService.Application.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/bin/Debug/net10.0/AdminService.Domain.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/bin/Debug/net10.0/AdminService.Domain.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.csproj.AssemblyReference.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.GeneratedMSBuildEditorConfig.editorconfig
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.AssemblyInfoInputs.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.AssemblyInfo.cs
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.csproj.CoreCompileInputs.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.sourcelink.json
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminSer.C08DC27C.Up2Date
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/refint/AdminService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/AdminService.Application.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/AdminService/AdminService.Application/obj/Debug/net10.0/ref/AdminService.Application.dll

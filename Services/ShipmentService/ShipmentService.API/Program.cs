@@ -10,8 +10,12 @@ using ShipmentService.Infrastructure.Repositories;
 using System.Text;
 using Shared.Messaging;
 using Shared.Logs;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load .env file at startup
+DotNetEnv.Env.Load();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -92,6 +96,9 @@ builder.Services.AddCors(options =>
 // Add Database Context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Server=.;Database=ShipmentServiceDb;Integrated Security=true;TrustServerCertificate=true;";
+
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "2004@Nilu"; // fallback to .env value
+connectionString = string.Format(connectionString, dbPassword);
 
 builder.Services.AddDbContext<ShipmentDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>

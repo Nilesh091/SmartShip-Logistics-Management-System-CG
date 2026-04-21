@@ -1,0 +1,12 @@
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/bin/Debug/net10.0/ShipmentService.Domain.deps.json
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/bin/Debug/net10.0/ShipmentService.Domain.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/bin/Debug/net10.0/ShipmentService.Domain.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.AssemblyInfoInputs.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.AssemblyInfo.cs
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.csproj.CoreCompileInputs.cache
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.sourcelink.json
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/refint/ShipmentService.Domain.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ShipmentService.Domain.pdb
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Domain/obj/Debug/net10.0/ref/ShipmentService.Domain.dll

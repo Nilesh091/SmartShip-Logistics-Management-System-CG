@@ -11,11 +11,20 @@ using TrackingService.Infrastructure.Services;
 using Shared.Logs;
 using Shared.Messaging;
 using TrackingService.Application.EventHandlers;
+using DotNetEnv;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Load .env file at startup
+DotNetEnv.Env.Load();
+
 // DB
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "2004@Nilu"; // fallback to .env value
+connectionString = string.Format(connectionString, dbPassword);
+
 builder.Services.AddDbContext<TrackingDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
+    options.UseSqlServer(connectionString, sqlOptions =>
     {
         sqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
