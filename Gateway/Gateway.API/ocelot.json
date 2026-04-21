@@ -5,7 +5,7 @@
       "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "authservice", "Port": 8080 }
+        { "Host": "localhost", "Port": 5045 }
       ],
       "UpstreamPathTemplate": "/auth/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
@@ -17,7 +17,7 @@
       "DownstreamPathTemplate": "/api/Admin/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "adminservice", "Port": 8080 }
+        { "Host": "localhost", "Port": 5127 }
       ],
       "UpstreamPathTemplate": "/admin/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
@@ -34,7 +34,7 @@
       "DownstreamPathTemplate": "/api/Tracking/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "trackingservice", "Port": 8080 }
+        { "Host": "localhost", "Port": 5062 }
       ],
       "UpstreamPathTemplate": "/tracking/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
@@ -50,7 +50,7 @@
       "DownstreamPathTemplate": "/api/shipments/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
-        { "Host": "shipmentservice", "Port": 8080 }
+        { "Host": "localhost", "Port": 5286 }
       ],
       "UpstreamPathTemplate": "/shipments/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
@@ -68,7 +68,7 @@
       {
         "Name": "Auth Service",
         "Version": "v1",
-        "Url": "http://authservice:8080/swagger/v1/swagger.json"
+        "Url": "http://localhost:5045/swagger/v1/swagger.json"
       }
     ]
   },
@@ -78,7 +78,7 @@
       {
         "Name": "Admin Service",
         "Version": "v1",
-        "Url": "http://adminservice:8080/swagger/v1/swagger.json"
+        "Url": "http://localhost:5127/swagger/v1/swagger.json"
       }
     ]
   },
@@ -88,7 +88,7 @@
       {
         "Name": "Tracking Service",
         "Version": "v1",
-        "Url": "http://trackingservice:8080/swagger/v1/swagger.json"
+        "Url": "http://localhost:5062/swagger/v1/swagger.json"
       }
     ]
   },
@@ -98,7 +98,7 @@
       {
         "Name": "Shipment Service",
         "Version": "v1",
-        "Url": "http://shipmentservice:8080/swagger/v1/swagger.json"
+        "Url": "http://localhost:5286/swagger/v1/swagger.json"
       }
     ]
   }

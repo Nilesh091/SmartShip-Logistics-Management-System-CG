@@ -1,0 +1,149 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build All Services",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "SmartShip.sln",
+        "--configuration",
+        "Development"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Auth Service - Run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "Services/AuthService/AuthService.API/AuthService.API.csproj",
+        "--configuration",
+        "Development"
+      ],
+      "isBackground": false,
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Shipment Service - Run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "Services/ShipmentService/ShipmentService.API/ShipmentService.API.csproj",
+        "--configuration",
+        "Development"
+      ],
+      "isBackground": false,
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Tracking Service - Run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "Services/TrackingService/TrackingService.API/TrackingService.API.csproj",
+        "--configuration",
+        "Development"
+      ],
+      "isBackground": false,
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Admin Service - Run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "Services/AdminService/AdminService.API/AdminService.API.csproj",
+        "--configuration",
+        "Development"
+      ],
+      "isBackground": false,
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Notification Service - Run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "Services/NotificationService/NotificationService.API/NotificationService.API.csproj",
+        "--configuration",
+        "Development"
+      ],
+      "isBackground": false,
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Gateway - Run",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "Gateway/Gateway.API/Gateway.API.csproj",
+        "--configuration",
+        "Development"
+      ],
+      "isBackground": false,
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Clean Build",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "SmartShip.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Restore NuGet Packages",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "restore",
+        "SmartShip.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

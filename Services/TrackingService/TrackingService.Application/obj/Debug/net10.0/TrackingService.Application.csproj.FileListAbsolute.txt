@@ -14,3 +14,5 @@
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Application/obj/Debug/net10.0/refint/TrackingService.Application.dll
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Application/obj/Debug/net10.0/TrackingService.Application.pdb
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Application/obj/Debug/net10.0/ref/TrackingService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Application/bin/Debug/net10.0/Shared.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/TrackingService/TrackingService.Application/bin/Debug/net10.0/Shared.pdb

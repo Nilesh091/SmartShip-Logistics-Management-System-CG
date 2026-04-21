@@ -14,3 +14,5 @@
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Application/obj/Debug/net10.0/refint/ShipmentService.Application.dll
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Application/obj/Debug/net10.0/ShipmentService.Application.pdb
 /Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Application/obj/Debug/net10.0/ref/ShipmentService.Application.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Application/bin/Debug/net10.0/Shared.dll
+/Users/nrs/Capgimini/Sprint/SmartShip-Logistics-Management-System-CG/Services/ShipmentService/ShipmentService.Application/bin/Debug/net10.0/Shared.pdb

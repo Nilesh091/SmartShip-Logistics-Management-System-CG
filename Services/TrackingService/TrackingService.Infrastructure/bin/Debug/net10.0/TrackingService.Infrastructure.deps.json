@@ -1313,6 +1313,7 @@
       "Shared/1.0.0": {
         "dependencies": {
           "Microsoft.Extensions.Hosting": "10.0.5",
+          "RabbitMQ.Client": "6.6.0",
           "Serilog": "4.3.1",
           "Serilog.AspNetCore": "10.0.0",
           "Serilog.Sinks.Console": "6.1.1",
@@ -1327,6 +1328,7 @@
       },
       "TrackingService.Application/1.0.0": {
         "dependencies": {
+          "Shared": "1.0.0",
           "TrackingService.Domain": "1.0.0"
         },
         "runtime": {

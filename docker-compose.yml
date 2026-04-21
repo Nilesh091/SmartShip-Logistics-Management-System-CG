@@ -28,7 +28,10 @@ services:
       - "5001:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: Server=host.docker.internal,1433;Database=SmartLogisticsAuthServiceDb;User Id=sa;Password=2004@Nilu;TrustServerCertificate=True;
+      ConnectionStrings__DefaultConnection: Host=db.pspdrwkppsvksenkgxtn.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=ranjannilesh@123;SslMode=Require;TrustServerCertificate=true;Pooling=true;
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
     networks:
       - smartship-network
     depends_on:
@@ -67,8 +70,10 @@ services:
       - "5003:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: Server=host.docker.internal,1433;Database=SmartLogisticsShipmentServiceDb;User Id=sa;Password=2004@Nilu;TrustServerCertificate=True;
+      ConnectionStrings__DefaultConnection: Host=db.pspdrwkppsvksenkgxtn.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=ranjannilesh@123;SslMode=Require;TrustServerCertificate=true;Pooling=true;    
       RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
     networks:
       - smartship-network
     depends_on:
@@ -86,8 +91,10 @@ services:
       - "5004:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: Server=host.docker.internal,1433;Database=SmartLogisticTrackingService;User Id=sa;Password=2004@Nilu;TrustServerCertificate=True;
+      ConnectionStrings__DefaultConnection: Host=db.pspdrwkppsvksenkgxtn.supabase.co;Port=5432;Database=postgres;Username=postgres;Password=ranjannilesh@123;SslMode=Require;TrustServerCertificate=true;Pooling=true;
       RabbitMQ__HostName: rabbitmq
+      RabbitMQ__UserName: guest
+      RabbitMQ__Password: guest
     networks:
       - smartship-network
     depends_on:
@@ -111,7 +118,7 @@ services:
       Smtp__Host: smtp.gmail.com
       Smtp__Port: 587
       Smtp__Username: vivek250500@gmail.com
-      Smtp__Password: ugsg nzcc sumd eteb
+      Smtp__Password: ${SMTP_PASSWORD}
       Smtp__FromEmail: vivek250500@gmail.com
       Smtp__FromName: SmartShip Notifications
     networks:
