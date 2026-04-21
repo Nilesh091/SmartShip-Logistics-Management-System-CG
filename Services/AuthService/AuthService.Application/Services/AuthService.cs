@@ -4,6 +4,7 @@ using AuthService.Domain.Entities;
 using Shared.Messaging;
 using Shared.Events;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AuthService.Application.Services
 {
@@ -15,9 +16,11 @@ namespace AuthService.Application.Services
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _hasher;
     private readonly IRabbitMQPublisher _publisher;
+    private readonly IMemoryCache _cache;
     private readonly ILogger<AuthService> _logger;
+    private const string PENDING_USER_CACHE_KEY = "pending_user_{0}";
 
-    public AuthService(IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IOtpCodeRepository otpRepository, ITokenService tokenService, IPasswordHasher hasher, IRabbitMQPublisher publisher, ILogger<AuthService> logger)
+    public AuthService(IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IOtpCodeRepository otpRepository, ITokenService tokenService, IPasswordHasher hasher, IRabbitMQPublisher publisher, IMemoryCache cache, ILogger<AuthService> logger)
     {
       _userRepository = userRepository;
       _refreshTokenRepository = refreshTokenRepository;
@@ -25,6 +28,7 @@ namespace AuthService.Application.Services
       _tokenService = tokenService;
       _hasher = hasher;
       _publisher = publisher;
+      _cache = cache;
       _logger = logger;
     }
 
@@ -34,7 +38,7 @@ namespace AuthService.Application.Services
       {
         _logger.LogInformation($"Starting user registration for email: {dto.Email}");
 
-        // Check if user already exists
+        // Check if user already exists in Users table
         var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
         if (existingUser != null)
         {
@@ -42,23 +46,35 @@ namespace AuthService.Application.Services
           throw new Exception("User with this email already exists");
         }
 
-        var user = new User
+        // Step 1: Store temporary user data in CACHE (not in database)
+        var otp = new Random().Next(100000, 999999).ToString();
+
+        var pendingUserData = new
         {
-          Id = Guid.NewGuid(),
           Name = dto.Name,
           Email = dto.Email,
           PasswordHash = _hasher.Hash(dto.Password),
-          Role = "CUSTOMER"
+          Otp = otp,
+          CreatedAt = DateTime.UtcNow
         };
 
-        await _userRepository.AddAsync(user);
-        await _userRepository.SaveChangesAsync();
-        _logger.LogInformation($"User created in database with ID: {user.Id}");
+        // Store in cache with 5 minute expiration
+        var cacheKey = string.Format(PENDING_USER_CACHE_KEY, dto.Email);
+        var cacheOptions = new MemoryCacheEntryOptions()
+          .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
-        // Generate and send OTP for email verification
-        await GenerateAndSendOtpAsync(user);
+        _cache.Set(cacheKey, pendingUserData, cacheOptions);
+        _logger.LogInformation($"Pending user data stored in cache (expires in 5 min) for email: {dto.Email}");
 
-        _logger.LogInformation($"User registration completed successfully for: {dto.Email}");
+        // Publish event to send OTP email
+        _publisher.Publish("otp-generated", new OtpGeneratedEvent
+        {
+          Email = dto.Email,
+          Otp = otp
+        });
+        _logger.LogInformation($"OTP generation event published for email: {dto.Email}");
+
+        _logger.LogInformation($"Registration flow started for: {dto.Email}");
         return new AuthResponseDto
         {
           AccessToken = "OTP sent to email. Please verify your email to complete registration.",
@@ -112,28 +128,47 @@ namespace AuthService.Application.Services
       try
       {
         _logger.LogInformation($"OTP verification attempt for email: {dto.Email}");
-        var otp = await _otpRepository.GetByEmailAndCodeAsync(dto.Email, dto.Otp);
 
-        if (otp == null || otp.ExpiryTime < DateTime.UtcNow)
+        // Step 1: Retrieve pending user data from CACHE
+        var cacheKey = string.Format(PENDING_USER_CACHE_KEY, dto.Email);
+        if (!_cache.TryGetValue(cacheKey, out dynamic pendingUserData))
         {
-          _logger.LogWarning($"Invalid or expired OTP for email: {dto.Email}");
-          throw new Exception("Invalid or expired OTP");
+          _logger.LogWarning($"No pending registration found in cache for email: {dto.Email}");
+          throw new Exception("No pending registration found. Please register first.");
         }
 
-        var user = await _userRepository.GetByEmailAsync(dto.Email);
-
-        if (user == null)
+        // Step 2: Verify OTP
+        if (pendingUserData.Otp != dto.Otp)
         {
-          _logger.LogWarning($"User not found for email: {dto.Email}");
-          throw new Exception("User not found");
+          _logger.LogWarning($"Invalid OTP for email: {dto.Email}");
+          throw new Exception("Invalid OTP");
         }
 
-        // Delete OTP after successful verification
-        await _otpRepository.DeleteAsync(otp);
-        await _otpRepository.SaveChangesAsync();
         _logger.LogInformation($"OTP verified successfully for email: {dto.Email}");
 
-        return await GenerateTokens(user);
+        // Step 3: Create the actual user in database after OTP verification
+        var user = new User
+        {
+          Id = Guid.NewGuid(),
+          Name = pendingUserData.Name,
+          Email = pendingUserData.Email,
+          PasswordHash = pendingUserData.PasswordHash,
+          Role = "CUSTOMER"
+        };
+
+        await _userRepository.AddAsync(user);
+        await _userRepository.SaveChangesAsync();
+        _logger.LogInformation($"User successfully created after OTP verification with ID: {user.Id}");
+
+        // Step 4: Delete cache entry
+        _cache.Remove(cacheKey);
+        _logger.LogInformation($"Pending user data removed from cache for email: {dto.Email}");
+
+        // Step 5: Generate tokens
+        var tokens = await GenerateTokens(user);
+        _logger.LogInformation($"Tokens generated for newly registered user: {dto.Email}");
+
+        return tokens;
       }
       catch (Exception ex)
       {

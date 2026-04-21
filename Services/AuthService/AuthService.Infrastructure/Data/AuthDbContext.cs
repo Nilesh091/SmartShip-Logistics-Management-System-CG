@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Constants;
-using BCrypt.Net;
 
 namespace AuthService.Infrastructure.Data
 {
