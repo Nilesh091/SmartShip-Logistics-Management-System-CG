@@ -26,7 +26,7 @@ namespace AuthService.API.Controllers
         _logger.LogInformation($"User registration attempt for email: {dto.Email}");
         var result = await _authService.Register(dto);
         _logger.LogInformation($"User registered successfully: {dto.Email}");
-        return Ok(new { message = result.AccessToken, status = "OTP sent to email" });
+        return Ok(result);
       }
       catch (Exception ex)
       {
@@ -43,7 +43,7 @@ namespace AuthService.API.Controllers
         _logger.LogInformation($"Login attempt for email: {dto.Email}");
         var result = await _authService.Login(dto);
         _logger.LogInformation($"Login successful for email: {dto.Email}");
-        return Ok(new { message = result, status = "OTP sent to email" });
+        return Ok(result);
       }
       catch (Exception ex)
       {

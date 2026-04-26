@@ -44,7 +44,7 @@ public class ShipmentService : IShipmentService
     };
 
     var shipmentId = await _repository.AddAsync(shipment);
-    _publisher.Publish("shipment-created", new ShipmentCreatedEvent
+    _publisher.Publish("shipment-created", new Shared.Events.ShipmentCreatedEvent
     {
       ShipmentId = shipment.Id,
       UserId = shipment.UserId,
@@ -79,7 +79,7 @@ public class ShipmentService : IShipmentService
       return false;
 
     shipment.Status = ShipmentStatus.Booked;
-    _publisher.Publish("shipment-status-updated", new ShipmentStatusUpdatedEvent
+    _publisher.Publish("shipment-status-updated", new Shared.Events.ShipmentStatusUpdatedEvent
     {
       ShipmentId = shipment.Id,
       Status = shipment.Status,
@@ -88,7 +88,7 @@ public class ShipmentService : IShipmentService
     return await _repository.UpdateAsync(shipment);
   }
 
-  public async Task<bool> UpdateShipmentStatusAsync(Guid id, string status)
+  public async Task<bool> UpdateShipmentStatusAsync(Guid id, string status, string? location = null)
   {
     var shipment = await _repository.GetByIdAsync(id);
     if (shipment == null)
@@ -97,11 +97,13 @@ public class ShipmentService : IShipmentService
     if (!IsValidStatusTransition(shipment.Status, status))
       return false;
 
-    shipment.Status = status;
-    _publisher.Publish("shipment-status-updated", new ShipmentStatusUpdatedEvent
+    shipment.Status = status.ToUpperInvariant();
+    shipment.CurrentLocation = location;
+    _publisher.Publish("shipment-status-updated", new Shared.Events.ShipmentStatusUpdatedEvent
     {
       ShipmentId = shipment.Id,
       Status = shipment.Status,
+      Location = location,
       UpdatedAt = DateTime.UtcNow
     });
     return await _repository.UpdateAsync(shipment);
@@ -143,6 +145,7 @@ public class ShipmentService : IShipmentService
       Id = shipment.Id,
       UserId = shipment.UserId,
       Status = shipment.Status,
+      CurrentLocation = shipment.CurrentLocation,
       CreatedAt = shipment.CreatedAt,
       UpdatedAt = shipment.UpdatedAt,
       SenderAddress = shipment.SenderAddress == null ? null : new AddressDto
@@ -183,6 +186,13 @@ public class ShipmentService : IShipmentService
 
   private bool IsValidStatusTransition(string currentStatus, string newStatus)
   {
+    var current = currentStatus?.ToUpperInvariant();
+    var next = newStatus?.ToUpperInvariant();
+
+    // Allow repeated IN_TRANSIT for multiple hub/location updates
+    if (current == ShipmentStatus.InTransit && next == ShipmentStatus.InTransit)
+      return true;
+
     var validTransitions = new Dictionary<string, List<string>>
         {
             { ShipmentStatus.Draft, new List<string> { ShipmentStatus.Booked } },
@@ -193,7 +203,7 @@ public class ShipmentService : IShipmentService
             { ShipmentStatus.Delivered, new List<string>() }
         };
 
-    return validTransitions.ContainsKey(currentStatus) &&
-           validTransitions[currentStatus].Contains(newStatus);
+    return validTransitions.ContainsKey(current) &&
+           validTransitions[current].Contains(next);
   }
 }

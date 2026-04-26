@@ -42,6 +42,7 @@ namespace TrackingService.Application.EventHandlers
                         Id = Guid.NewGuid(),
                         ShipmentId = evt.ShipmentId,
                         Status = evt.Status,
+                        Location = evt.Location,
                         Timestamp = evt.UpdatedAt
                     });
                 }

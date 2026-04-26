@@ -15,8 +15,10 @@ public class TrackingService : ITrackingService
 
   public async Task AddEventAsync(TrackingEvent trackingEvent)
   {
-    trackingEvent.Id = Guid.NewGuid();
-    trackingEvent.Timestamp = DateTime.UtcNow;
+    if (trackingEvent.Id == Guid.Empty)
+      trackingEvent.Id = Guid.NewGuid();
+    if (trackingEvent.Timestamp == default)
+      trackingEvent.Timestamp = DateTime.UtcNow;
     await _repository.AddEventAsync(trackingEvent);
   }
 
@@ -37,8 +39,6 @@ public class TrackingService : ITrackingService
       Timestamp = DateTime.UtcNow
     };
 
-    // Save to database
     await _repository.AddEventAsync(trackingEvent);
-    await _repository.SaveChangesAsync();
   }
 }

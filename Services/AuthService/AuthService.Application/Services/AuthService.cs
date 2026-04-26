@@ -77,7 +77,10 @@ namespace AuthService.Application.Services
         _logger.LogInformation($"Registration flow started for: {dto.Email}");
         return new AuthResponseDto
         {
-          AccessToken = "OTP sent to email. Please verify your email to complete registration.",
+          Message = "OTP sent to email. Please verify your email to complete registration.",
+          Role = "CUSTOMER",
+          RequiresOtp = true,
+          AccessToken = null,
           RefreshToken = null
         };
       }
@@ -88,7 +91,7 @@ namespace AuthService.Application.Services
       }
     }
 
-    public async Task<string> Login(LoginDto dto)
+    public async Task<AuthResponseDto> Login(LoginDto dto)
     {
       try
       {
@@ -108,13 +111,27 @@ namespace AuthService.Application.Services
         {
           _logger.LogInformation($"Admin login detected for: {dto.Email}");
           var tokens = await GenerateTokens(user);
-          return tokens.AccessToken; // or return full response if needed
+          return new AuthResponseDto
+          {
+            Message = "Login successful",
+            Role = "ADMIN",
+            RequiresOtp = false,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken
+          };
         }
 
         await GenerateAndSendOtpAsync(user);
         _logger.LogInformation($"OTP sent to email for user: {dto.Email}");
 
-        return "OTP sent to email";
+        return new AuthResponseDto
+        {
+          Message = "OTP sent to email",
+          Role = "CUSTOMER",
+          RequiresOtp = true,
+          AccessToken = null,
+          RefreshToken = null
+        };
       }
       catch (Exception ex)
       {
@@ -129,46 +146,104 @@ namespace AuthService.Application.Services
       {
         _logger.LogInformation($"OTP verification attempt for email: {dto.Email}");
 
-        // Step 1: Retrieve pending user data from CACHE
+        // SCENARIO 1: REGISTRATION FLOW - Check pending user data in CACHE
         var cacheKey = string.Format(PENDING_USER_CACHE_KEY, dto.Email);
-        if (!_cache.TryGetValue(cacheKey, out dynamic pendingUserData))
+        if (_cache.TryGetValue(cacheKey, out dynamic pendingUserData))
         {
-          _logger.LogWarning($"No pending registration found in cache for email: {dto.Email}");
-          throw new Exception("No pending registration found. Please register first.");
+          _logger.LogInformation($"Registration flow detected for email: {dto.Email}");
+
+          // Verify OTP
+          if (pendingUserData.Otp != dto.Otp)
+          {
+            _logger.LogWarning($"Invalid OTP for registration email: {dto.Email}");
+            throw new Exception("Invalid OTP");
+          }
+
+          _logger.LogInformation($"OTP verified successfully for registration email: {dto.Email}");
+
+          // Create the actual user in database after OTP verification
+          var user = new User
+          {
+            Id = Guid.NewGuid(),
+            Name = pendingUserData.Name,
+            Email = pendingUserData.Email,
+            PasswordHash = pendingUserData.PasswordHash,
+            Role = "CUSTOMER"
+          };
+
+          await _userRepository.AddAsync(user);
+          await _userRepository.SaveChangesAsync();
+          _logger.LogInformation($"User successfully created after OTP verification with ID: {user.Id}");
+
+          // Delete cache entry
+          _cache.Remove(cacheKey);
+          _logger.LogInformation($"Pending user data removed from cache for email: {dto.Email}");
+
+          // Generate tokens
+          var tokens = await GenerateTokens(user);
+          _logger.LogInformation($"Tokens generated for newly registered user: {dto.Email}");
+
+          return new AuthResponseDto
+          {
+            Message = "Email verified successfully. Registration complete.",
+            Role = "CUSTOMER",
+            RequiresOtp = false,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken
+          };
         }
 
-        // Step 2: Verify OTP
-        if (pendingUserData.Otp != dto.Otp)
+        // SCENARIO 2: LOGIN FLOW - Check OTP in database
+        _logger.LogInformation($"Login flow detected for email: {dto.Email}");
+        var otpRecord = await _otpRepository.GetByEmailAsync(dto.Email);
+
+        if (otpRecord == null)
         {
-          _logger.LogWarning($"Invalid OTP for email: {dto.Email}");
+          _logger.LogWarning($"No OTP found for login email: {dto.Email}");
+          throw new Exception("No OTP found. Please login first to receive OTP.");
+        }
+
+        // Check if OTP is expired
+        if (otpRecord.ExpiryTime < DateTime.UtcNow)
+        {
+          _logger.LogWarning($"OTP expired for email: {dto.Email}");
+          await _otpRepository.DeleteAsync(otpRecord);
+          throw new Exception("OTP has expired. Please request a new OTP.");
+        }
+
+        // Verify OTP code
+        if (otpRecord.Code != dto.Otp)
+        {
+          _logger.LogWarning($"Invalid OTP code for login email: {dto.Email}");
           throw new Exception("Invalid OTP");
         }
 
-        _logger.LogInformation($"OTP verified successfully for email: {dto.Email}");
+        _logger.LogInformation($"OTP verified successfully for login email: {dto.Email}");
 
-        // Step 3: Create the actual user in database after OTP verification
-        var user = new User
+        // Get the user and delete OTP record
+        var loginUser = await _userRepository.GetByEmailAsync(dto.Email);
+        if (loginUser == null)
         {
-          Id = Guid.NewGuid(),
-          Name = pendingUserData.Name,
-          Email = pendingUserData.Email,
-          PasswordHash = pendingUserData.PasswordHash,
-          Role = "CUSTOMER"
+          _logger.LogWarning($"User not found after OTP verification for email: {dto.Email}");
+          throw new Exception("User not found");
+        }
+
+        await _otpRepository.DeleteAsync(otpRecord);
+        await _otpRepository.SaveChangesAsync();
+        _logger.LogInformation($"OTP record deleted after verification for email: {dto.Email}");
+
+        // Generate tokens for login
+        var loginTokens = await GenerateTokens(loginUser);
+        _logger.LogInformation($"Tokens generated for login user: {dto.Email}");
+
+        return new AuthResponseDto
+        {
+          Message = "Login successful. OTP verified.",
+          Role = loginUser.Role,
+          RequiresOtp = false,
+          AccessToken = loginTokens.AccessToken,
+          RefreshToken = loginTokens.RefreshToken
         };
-
-        await _userRepository.AddAsync(user);
-        await _userRepository.SaveChangesAsync();
-        _logger.LogInformation($"User successfully created after OTP verification with ID: {user.Id}");
-
-        // Step 4: Delete cache entry
-        _cache.Remove(cacheKey);
-        _logger.LogInformation($"Pending user data removed from cache for email: {dto.Email}");
-
-        // Step 5: Generate tokens
-        var tokens = await GenerateTokens(user);
-        _logger.LogInformation($"Tokens generated for newly registered user: {dto.Email}");
-
-        return tokens;
       }
       catch (Exception ex)
       {

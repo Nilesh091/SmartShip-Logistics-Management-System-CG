@@ -31,6 +31,7 @@ namespace Shared.Messaging
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var hostName = _configuration["RabbitMQ:HostName"] ?? "rabbitmq";
+            var serviceId = _configuration["RabbitMQ:ServiceId"] ?? "service";
 
             var factory = new ConnectionFactory()
             {
@@ -42,26 +43,42 @@ namespace Shared.Messaging
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
-            _channel.QueueDeclare("shipment-created", durable: true, exclusive: false, autoDelete: false);
-            _channel.QueueDeclare("shipment-status-updated", durable: true, exclusive: false, autoDelete: false);
-            _channel.QueueDeclare("otp-generated", durable: true, exclusive: false, autoDelete: false);
+            // Events this consumer subscribes to
+            var exchanges = new[] { "shipment-created", "shipment-status-updated", "otp-generated" };
 
             var consumer = new EventingBasicConsumer(_channel);
+
+            foreach (var exchange in exchanges)
+            {
+                // Declare fanout exchange
+                _channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout, durable: true);
+
+                // Each service gets its own queue per exchange
+                var queueName = $"{exchange}.{serviceId}";
+                _channel.QueueDeclare(queueName, durable: true, exclusive: false, autoDelete: false);
+                _channel.QueueBind(queue: queueName, exchange: exchange, routingKey: "");
+                _channel.BasicConsume(queueName, false, consumer);
+            }
 
             consumer.Received += async (model, ea) =>
             {
                 var json = Encoding.UTF8.GetString(ea.Body.ToArray());
+                var eventName = ea.Exchange; // exchange name = event name
 
-                using var scope = _serviceProvider.CreateScope();
-
-                var dispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
-
-                await dispatcher.Dispatch(ea.RoutingKey, json);
+                try
+                {
+                    using var scope = _serviceProvider.CreateScope();
+                    var dispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
+                    await dispatcher.Dispatch(eventName, json);
+                    _channel.BasicAck(ea.DeliveryTag, false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to process event {EventName}. Message will be requeued.", eventName);
+                    _channel.BasicNack(ea.DeliveryTag, false, true);
+                }
             };
 
-            _channel.BasicConsume("shipment-created", true, consumer);
-            _channel.BasicConsume("shipment-status-updated", true, consumer);
-            _channel.BasicConsume("otp-generated", true, consumer);
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
     }

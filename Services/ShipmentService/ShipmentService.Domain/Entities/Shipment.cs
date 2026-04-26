@@ -8,6 +8,8 @@ public class Shipment
 
   public string Status { get; set; } = string.Empty;
 
+  public string? CurrentLocation { get; set; }
+
   public DateTime CreatedAt { get; set; }
 
   public DateTime? UpdatedAt { get; set; }

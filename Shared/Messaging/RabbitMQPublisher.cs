@@ -49,51 +49,40 @@ namespace Shared.Messaging
             }
         }
 
-        public void Publish<T>(string queue, T message)
+        public void Publish<T>(string eventName, T message)
         {
-            if (string.IsNullOrWhiteSpace(queue))
-                throw new ArgumentException("Queue name cannot be null or empty", nameof(queue));
+            if (string.IsNullOrWhiteSpace(eventName))
+                throw new ArgumentException("Event name cannot be null or empty", nameof(eventName));
 
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
             try
             {
-                // Ensure connection is alive
                 if (_channel == null || _channel.IsClosed)
-                {
                     Initialize();
-                }
 
-                // Declare queue
-                _channel.QueueDeclare(
-                    queue: queue,
-                    durable: true,
-                    exclusive: false,
-                    autoDelete: false,
-                    arguments: null
-                );
+                // Declare fanout exchange
+                _channel.ExchangeDeclare(exchange: eventName, type: ExchangeType.Fanout, durable: true);
 
-                // Serialize message
                 var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
-                // Properties (persistent message)
                 var properties = _channel.CreateBasicProperties();
                 properties.Persistent = true;
 
-                // Publish
+                // Publish to exchange, not directly to queue
                 _channel.BasicPublish(
-                    exchange: "",
-                    routingKey: queue,
+                    exchange: eventName,
+                    routingKey: "",
                     basicProperties: properties,
                     body: body
                 );
 
-                _logger.LogDebug($"Message published to queue '{queue}'");
+                _logger.LogDebug($"Message published to exchange '{eventName}'");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to publish message to queue '{queue}'");
+                _logger.LogError(ex, $"Failed to publish message to exchange '{eventName}'");
                 throw;
             }
         }

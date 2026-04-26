@@ -48,7 +48,7 @@ namespace NotificationService.Infrastructure.Messaging
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error processing event '{eventName}': {ex.Message}");
-                // Don't throw - log and continue to prevent service crash
+                throw;
             }
         }
     }
