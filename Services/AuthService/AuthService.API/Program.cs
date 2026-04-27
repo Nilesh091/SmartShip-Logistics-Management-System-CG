@@ -34,8 +34,6 @@ builder.Services.AddSwaggerGen(options =>
 
 // Configure Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "2004@Nilu"; // fallback to .env value
-connectionString = string.Format(connectionString, dbPassword);
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(connectionString)

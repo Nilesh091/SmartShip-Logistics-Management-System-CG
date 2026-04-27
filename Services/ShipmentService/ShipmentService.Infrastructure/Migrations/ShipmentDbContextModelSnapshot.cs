@@ -86,6 +86,10 @@ namespace ShipmentService.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CurrentLocation")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uniqueidentifier");
 

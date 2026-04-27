@@ -95,10 +95,7 @@ builder.Services.AddCors(options =>
 
 // Add Database Context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Server=.;Database=ShipmentServiceDb;Integrated Security=true;TrustServerCertificate=true;";
-
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "2004@Nilu"; // fallback to .env value
-connectionString = string.Format(connectionString, dbPassword);
+    ?? "Server=localhost,1433;Database=smartship_shipment;User Id=sa;Password=Nilu@1234;TrustServerCertificate=True;";
 
 builder.Services.AddDbContext<ShipmentDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>
