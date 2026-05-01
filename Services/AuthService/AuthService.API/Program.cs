@@ -69,6 +69,8 @@ builder.Host.ConfigureSerilog("AuthService");
 builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IOAuthService, AuthService.Application.Services.GoogleOAuthService>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
