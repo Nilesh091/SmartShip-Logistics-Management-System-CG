@@ -44,8 +44,8 @@ namespace Shared.Messaging
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to initialize RabbitMQ connection");
-                throw;
+                _logger.LogWarning(ex, "RabbitMQ unavailable — events will be skipped until connection is restored");
+                // Do NOT throw — allow the service to start without RabbitMQ
             }
         }
 
@@ -82,8 +82,8 @@ namespace Shared.Messaging
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to publish message to exchange '{eventName}'");
-                throw;
+                _logger.LogWarning(ex, $"Failed to publish message to exchange '{eventName}' — RabbitMQ may be unavailable");
+                // Do NOT throw — publishing is best-effort
             }
         }
 

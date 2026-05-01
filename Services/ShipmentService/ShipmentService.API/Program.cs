@@ -1,13 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using ShipmentService.Application.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShipmentService.Application.Services;
 using ShipmentService.Application.Repositories;
 using ShipmentService.Infrastructure.Persistence;
 using ShipmentService.Infrastructure.Repositories;
+using ShipmentService.Infrastructure.Services;
 using System.Text;
+using System.Net.Http.Headers;
 using Shared.Messaging;
 using Shared.Logs;
 using DotNetEnv;
@@ -107,6 +110,17 @@ builder.Services.AddDbContext<ShipmentDbContext>(options =>
     })
 );
 
+builder.Services.AddHttpClient("Nominatim", client =>
+{
+    client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("SmartShip/1.0");
+});
+
+builder.Services.AddHttpClient("OpenRouteService", client =>
+{
+    client.BaseAddress = new Uri("https://api.openrouteservice.org/");
+});
+
 // Add JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? "your-super-secret-key-that-is-at-least-32-characters-long-for-security");
@@ -135,6 +149,10 @@ builder.Services.AddAuthentication(options =>
 
 // Add Application Services
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
+builder.Services.AddScoped<IShipmentHubRepository, ShipmentHubRepository>();
+builder.Services.AddScoped<IGeoRoutingService, GeoRoutingService>();
+builder.Services.AddScoped<IHubGeneratorService, HubGeneratorService>();
+builder.Services.AddScoped<IPricingService, ShipmentService.Infrastructure.Services.PricingService>();
 builder.Services.AddScoped<IShipmentService, ShipmentService.Application.Services.ShipmentService>();
 
 // Add Logging

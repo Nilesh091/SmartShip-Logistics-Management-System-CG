@@ -48,9 +48,24 @@ namespace AdminService.Infrastructure.Services
             return await _shipmentClient.GetAllShipments(token);
         }
 
+        public async Task<string> GetShipmentHubs(Guid shipmentId, string token)
+        {
+            return await _shipmentClient.GetShipmentHubs(shipmentId, token);
+        }
+
+        public async Task<string> GenerateShipmentHubs(Guid shipmentId, string token)
+        {
+            return await _shipmentClient.GenerateShipmentHubs(shipmentId, token);
+        }
+
         public async Task ResolveShipment(Guid shipmentId, string token)
         {
             await _shipmentClient.ResolveShipment(shipmentId, token);
+        }
+
+        public async Task UpdateShipmentHubStatus(Guid hubId, string status, string token)
+        {
+            await _shipmentClient.UpdateShipmentHubStatus(hubId, status, token);
         }
 
         public async Task<string> GetAllUsers(string token)

@@ -8,6 +8,10 @@ public interface IShipmentService
 
   Task<ShipmentResponseDto?> GetShipmentByIdAsync(Guid id);
 
+  Task<List<ShipmentHubDto>> GetShipmentHubsAsync(Guid shipmentId);
+
+  Task<List<ShipmentHubDto>> GenerateShipmentHubsAsync(Guid shipmentId);
+
   Task<List<ShipmentResponseDto>> GetUserShipmentsAsync(Guid userId);
 
   Task<List<ShipmentResponseDto>> GetAllShipmentsAsync();
@@ -15,6 +19,8 @@ public interface IShipmentService
   Task<bool> BookShipmentAsync(Guid id);
 
   Task<bool> UpdateShipmentStatusAsync(Guid id, string status, string? location = null);
+
+  Task<bool> UpdateShipmentHubStatusAsync(Guid hubId, string status);
 
   Task<bool> CancelShipmentAsync(Guid id);
 }

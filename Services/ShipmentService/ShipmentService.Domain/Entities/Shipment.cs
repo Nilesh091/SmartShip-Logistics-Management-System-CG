@@ -25,4 +25,6 @@ public class Shipment
   public Guid PackageId { get; set; }
 
   public Package? Package { get; set; }
+
+  public decimal Price { get; set; }
 }

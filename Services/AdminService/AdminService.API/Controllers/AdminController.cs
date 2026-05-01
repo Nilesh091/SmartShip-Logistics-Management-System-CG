@@ -42,6 +42,22 @@ namespace AdminService.API.Controllers
             return Ok(await _service.GetAllShipments(token));
         }
 
+        [HttpGet("shipments/{id}/hubs")]
+        public async Task<IActionResult> ShipmentHubs(Guid id)
+        {
+            var token = Request.Headers["Authorization"].ToString();
+
+            return Ok(await _service.GetShipmentHubs(id, token));
+        }
+
+        [HttpPost("shipments/{id}/hubs/generate")]
+        public async Task<IActionResult> GenerateShipmentHubs(Guid id)
+        {
+            var token = Request.Headers["Authorization"].ToString();
+
+            return Ok(await _service.GenerateShipmentHubs(id, token));
+        }
+
         [HttpPut("shipments/{id}/resolve")]
         public async Task<IActionResult> Resolve(Guid id)
         {
@@ -50,6 +66,16 @@ namespace AdminService.API.Controllers
             await _service.ResolveShipment(id, token);
 
             return Ok("Shipment resolved");
+        }
+
+        [HttpPut("shipments/hubs/{hubId}/status")]
+        public async Task<IActionResult> UpdateShipmentHubStatus(Guid hubId, [FromBody] UpdateShipmentHubStatusDto updateDto)
+        {
+            var token = Request.Headers["Authorization"].ToString();
+
+            await _service.UpdateShipmentHubStatus(hubId, updateDto.Status, token);
+
+            return Ok("Shipment hub updated");
         }
 
         [HttpGet("users")]

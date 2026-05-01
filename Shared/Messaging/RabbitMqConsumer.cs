@@ -36,34 +36,39 @@ namespace Shared.Messaging
             var factory = new ConnectionFactory()
             {
                 HostName = hostName,
-                UserName = "guest",
-                Password = "guest"
+                UserName = _configuration["RabbitMQ:UserName"] ?? "guest",
+                Password = _configuration["RabbitMQ:Password"] ?? "guest"
             };
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
+            // Retry until RabbitMQ is available
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    _connection = factory.CreateConnection();
+                    _channel = _connection.CreateModel();
+                    _logger.LogInformation("RabbitMQ consumer connected successfully");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "RabbitMQ unavailable — retrying in 5 seconds...");
+                    await Task.Delay(5000, stoppingToken);
+                }
+            }
+
+            if (stoppingToken.IsCancellationRequested) return;
 
             // Events this consumer subscribes to
             var exchanges = new[] { "shipment-created", "shipment-status-updated", "otp-generated" };
 
             var consumer = new EventingBasicConsumer(_channel);
 
-            foreach (var exchange in exchanges)
-            {
-                // Declare fanout exchange
-                _channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout, durable: true);
-
-                // Each service gets its own queue per exchange
-                var queueName = $"{exchange}.{serviceId}";
-                _channel.QueueDeclare(queueName, durable: true, exclusive: false, autoDelete: false);
-                _channel.QueueBind(queue: queueName, exchange: exchange, routingKey: "");
-                _channel.BasicConsume(queueName, false, consumer);
-            }
-
+            // Wire up handler BEFORE calling BasicConsume
             consumer.Received += async (model, ea) =>
             {
                 var json = Encoding.UTF8.GetString(ea.Body.ToArray());
-                var eventName = ea.Exchange; // exchange name = event name
+                var eventName = ea.Exchange;
 
                 try
                 {
@@ -71,6 +76,7 @@ namespace Shared.Messaging
                     var dispatcher = scope.ServiceProvider.GetRequiredService<IEventDispatcher>();
                     await dispatcher.Dispatch(eventName, json);
                     _channel.BasicAck(ea.DeliveryTag, false);
+                    _logger.LogInformation("Processed and acked event {EventName}", eventName);
                 }
                 catch (Exception ex)
                 {
@@ -78,6 +84,19 @@ namespace Shared.Messaging
                     _channel.BasicNack(ea.DeliveryTag, false, true);
                 }
             };
+
+            foreach (var exchange in exchanges)
+            {
+                _channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout, durable: true);
+
+                var staleQueueName = $"{exchange}.service";
+                try { _channel.QueueDelete(staleQueueName, ifUnused: false, ifEmpty: false); } catch { }
+
+                var queueName = $"{exchange}.{serviceId}";
+                _channel.QueueDeclare(queueName, durable: true, exclusive: false, autoDelete: false);
+                _channel.QueueBind(queue: queueName, exchange: exchange, routingKey: "");
+                _channel.BasicConsume(queueName, false, consumer);
+            }
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }

@@ -9,7 +9,13 @@ namespace AdminService.Application.Interfaces
 
         Task<string> GetAllShipments(string token);
 
+        Task<string> GetShipmentHubs(Guid shipmentId, string token);
+
+        Task<string> GenerateShipmentHubs(Guid shipmentId, string token);
+
         Task ResolveShipment(Guid shipmentId, string token);
+
+        Task UpdateShipmentHubStatus(Guid hubId, string status, string token);
 
         Task<string> GetAllUsers(string token);
 

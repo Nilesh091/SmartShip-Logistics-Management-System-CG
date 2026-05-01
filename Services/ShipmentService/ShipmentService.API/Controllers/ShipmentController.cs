@@ -227,6 +227,81 @@ public class ShipmentController : ControllerBase
   }
 
   /// <summary>
+  /// Get virtual hubs generated for a shipment (ADMIN only)
+  /// </summary>
+  [HttpGet("{id}/hubs")]
+  [Authorize(Roles = "ADMIN")]
+  public async Task<IActionResult> GetShipmentHubs(Guid id)
+  {
+    try
+    {
+      var shipment = await _service.GetShipmentByIdAsync(id);
+      if (shipment == null)
+        return NotFound(new { error = "Shipment not found." });
+
+      var hubs = await _service.GetShipmentHubsAsync(id);
+
+      return Ok(new { data = hubs, count = hubs.Count });
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError($"Error fetching hubs for shipment {id}: {ex.Message}");
+      return StatusCode(500, new { error = "An error occurred while fetching shipment hubs." });
+    }
+  }
+
+  /// <summary>
+  /// Regenerate virtual hubs for a shipment (ADMIN only)
+  /// </summary>
+  [HttpPost("{id}/hubs/generate")]
+  [Authorize(Roles = "ADMIN")]
+  public async Task<IActionResult> GenerateShipmentHubs(Guid id)
+  {
+    try
+    {
+      var shipment = await _service.GetShipmentByIdAsync(id);
+      if (shipment == null)
+        return NotFound(new { error = "Shipment not found." });
+
+      var hubs = await _service.GenerateShipmentHubsAsync(id);
+      return Ok(new { data = hubs, count = hubs.Count, message = "Shipment hubs generated successfully." });
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError($"Error generating hubs for shipment {id}: {ex.Message}");
+      return StatusCode(500, new { error = "An error occurred while generating shipment hubs." });
+    }
+  }
+
+  /// <summary>
+  /// Update a virtual hub status (ADMIN only)
+  /// </summary>
+  [HttpPut("hubs/{hubId}/status")]
+  [Authorize(Roles = "ADMIN")]
+  public async Task<IActionResult> UpdateShipmentHubStatus(Guid hubId, [FromBody] UpdateShipmentHubStatusDto dto)
+  {
+    try
+    {
+      if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+      if (string.IsNullOrWhiteSpace(dto.Status))
+        return BadRequest(new { error = "Status is required." });
+
+      var success = await _service.UpdateShipmentHubStatusAsync(hubId, dto.Status);
+      if (!success)
+        return NotFound(new { error = "Shipment hub not found or status update failed." });
+
+      return Ok(new { message = "Shipment hub status updated successfully." });
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError($"Error updating shipment hub {hubId}: {ex.Message}");
+      return StatusCode(500, new { error = "An error occurred while updating the shipment hub." });
+    }
+  }
+
+  /// <summary>
   /// Helper method to extract UserId from JWT claims
   /// </summary>
   private Guid GetUserIdFromClaims()
