@@ -10,6 +10,8 @@ public class ShipmentResponseDto
 
   public string? CurrentLocation { get; set; }
 
+  public string? DelayReason { get; set; }
+
   public decimal Price { get; set; }
 
   public DateTime CreatedAt { get; set; }

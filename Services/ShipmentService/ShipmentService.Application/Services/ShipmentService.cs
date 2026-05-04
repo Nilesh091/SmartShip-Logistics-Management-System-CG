@@ -182,7 +182,7 @@ public class ShipmentService : IShipmentService
         return await _repository.UpdateAsync(shipment);
     }
 
-    public async Task<bool> UpdateShipmentStatusAsync(Guid id, string status, string? location = null)
+    public async Task<bool> UpdateShipmentStatusAsync(Guid id, string status, string? location = null, string? delayReason = null)
     {
         var shipment = await _repository.GetByIdAsync(id);
         if (shipment == null)
@@ -193,6 +193,8 @@ public class ShipmentService : IShipmentService
 
         shipment.Status = status.ToUpperInvariant();
         shipment.CurrentLocation = location;
+        if (shipment.Status == ShipmentStatus.Delayed)
+            shipment.DelayReason = delayReason;
         _publisher.Publish("shipment-status-updated", new Shared.Events.ShipmentStatusUpdatedEvent
         {
             ShipmentId = shipment.Id,
@@ -248,6 +250,7 @@ public class ShipmentService : IShipmentService
             UserId = shipment.UserId,
             Status = shipment.Status,
             CurrentLocation = shipment.CurrentLocation,
+            DelayReason = shipment.DelayReason,
             Price = shipment.Price,
             CreatedAt = shipment.CreatedAt,
             UpdatedAt = shipment.UpdatedAt,
@@ -328,6 +331,13 @@ public class ShipmentService : IShipmentService
 
         // Allow repeated IN_TRANSIT for multiple hub/location updates
         if (current == ShipmentStatus.InTransit && next == ShipmentStatus.InTransit)
+            return true;
+
+        // DELAYED can resume to its previous active status
+        var activeStatuses = new[] { ShipmentStatus.PickedUp, ShipmentStatus.InTransit, ShipmentStatus.OutForDelivery };
+        if (next == ShipmentStatus.Delayed && activeStatuses.Contains(current))
+            return true;
+        if (current == ShipmentStatus.Delayed && activeStatuses.Contains(next))
             return true;
 
         var validTransitions = new Dictionary<string, List<string>>

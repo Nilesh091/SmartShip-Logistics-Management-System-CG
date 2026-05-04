@@ -10,6 +10,8 @@ public class Shipment
 
   public string? CurrentLocation { get; set; }
 
+  public string? DelayReason { get; set; }
+
   public DateTime CreatedAt { get; set; }
 
   public DateTime? UpdatedAt { get; set; }

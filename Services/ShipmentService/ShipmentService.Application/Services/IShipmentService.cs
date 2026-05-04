@@ -18,7 +18,7 @@ public interface IShipmentService
 
   Task<bool> BookShipmentAsync(Guid id);
 
-  Task<bool> UpdateShipmentStatusAsync(Guid id, string status, string? location = null);
+  Task<bool> UpdateShipmentStatusAsync(Guid id, string status, string? location = null, string? delayReason = null);
 
   Task<bool> UpdateShipmentHubStatusAsync(Guid hubId, string status);
 

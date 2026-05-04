@@ -27,15 +27,15 @@ public class TrackingService : ITrackingService
     return await _repository.GetTrackingByShipmentIdAsync(shipmentId);
   }
 
-  public async Task UpdateShipmentStatusAsync(Guid shipmentId, string status, string? location = null)
+  public async Task UpdateShipmentStatusAsync(Guid shipmentId, string status, string? location = null, string? delayReason = null)
   {
-    // Create tracking event
     var trackingEvent = new TrackingEvent
     {
       Id = Guid.NewGuid(),
       ShipmentId = shipmentId,
       Status = status,
       Location = location,
+      DelayReason = status.ToUpperInvariant() == "DELAYED" ? delayReason : null,
       Timestamp = DateTime.UtcNow
     };
 

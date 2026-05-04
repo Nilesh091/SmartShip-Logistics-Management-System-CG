@@ -13,4 +13,6 @@ public static class ShipmentStatus
   public const string OutForDelivery = "OUT_FOR_DELIVERY";
 
   public const string Delivered = "DELIVERED";
+
+  public const string Delayed = "DELAYED";
 }

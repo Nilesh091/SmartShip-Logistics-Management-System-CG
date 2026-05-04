@@ -78,13 +78,13 @@ public class TrackingController : ControllerBase
       }
 
       // Validate status against allowed values
-      var validStatuses = new[] { "DRAFT", "BOOKED", "PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED" };
+      var validStatuses = new[] { "DRAFT", "BOOKED", "PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED", "DELAYED" };
       if (!validStatuses.Contains(request.Status.ToUpperInvariant()))
       {
         return BadRequest(new { message = $"Invalid status. Allowed values: {string.Join(", ", validStatuses)}" });
       }
 
-      await _trackingService.UpdateShipmentStatusAsync(shipmentId, request.Status, request.Location);
+      await _trackingService.UpdateShipmentStatusAsync(shipmentId, request.Status, request.Location, request.DelayReason);
 
       _logger.LogInformation(
           "Shipment {ShipmentId} status updated to {Status} at location {Location}",

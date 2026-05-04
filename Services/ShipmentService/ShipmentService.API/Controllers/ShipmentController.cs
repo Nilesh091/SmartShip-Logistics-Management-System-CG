@@ -212,7 +212,7 @@ public class ShipmentController : ControllerBase
         return NotFound(new { error = "Shipment not found." });
 
       _logger.LogInformation($"Admin updating shipment {id} status to {dto.Status}");
-      var success = await _service.UpdateShipmentStatusAsync(id, dto.Status, dto.Location);
+      var success = await _service.UpdateShipmentStatusAsync(id, dto.Status, dto.Location, dto.DelayReason);
 
       if (!success)
         return BadRequest(new { error = "Invalid status transition." });

@@ -6,5 +6,5 @@ public interface ITrackingService
 {
   Task AddEventAsync(TrackingEvent trackingEvent);
   Task<List<TrackingEvent>> GetTrackingAsync(Guid shipmentId);
-  Task UpdateShipmentStatusAsync(Guid shipmentId, string status, string? location = null);
+  Task UpdateShipmentStatusAsync(Guid shipmentId, string status, string? location = null, string? delayReason = null);
 }

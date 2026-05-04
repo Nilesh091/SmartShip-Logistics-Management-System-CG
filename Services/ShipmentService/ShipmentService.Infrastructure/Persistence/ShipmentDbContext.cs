@@ -29,6 +29,7 @@ public class ShipmentDbContext : DbContext
       entity.Property(e => e.UserId).IsRequired();
       entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
       entity.Property(e => e.CurrentLocation).HasMaxLength(255);
+      entity.Property(e => e.DelayReason).HasMaxLength(500);
       entity.Property(e => e.CreatedAt).IsRequired();
       entity.Property(e => e.UpdatedAt);
       entity.Property(e => e.Price).IsRequired().HasColumnType("decimal(18,2)");

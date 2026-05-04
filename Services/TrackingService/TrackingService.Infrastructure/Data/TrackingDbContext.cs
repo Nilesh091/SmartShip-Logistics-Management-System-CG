@@ -23,6 +23,7 @@ public class TrackingDbContext : DbContext
       entity.Property(e => e.Status).IsRequired();
       entity.Property(e => e.Timestamp).IsRequired();
       entity.Property(e => e.Location).IsRequired(false);
+      entity.Property(e => e.DelayReason).IsRequired(false).HasMaxLength(500);
     });
   }
 }

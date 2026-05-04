@@ -7,7 +7,7 @@ public class UpdateShipmentStatusRequest
 {
   /// <summary>
   /// The new status for the shipment
-  /// Valid values: DRAFT, BOOKED, PICKED_UP, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED
+  /// Valid values: DRAFT, BOOKED, PICKED_UP, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, DELAYED
   /// </summary>
   public string Status { get; set; } = string.Empty;
 
@@ -15,4 +15,9 @@ public class UpdateShipmentStatusRequest
   /// Optional location information (e.g., "Ludhiana" or "Delhi - Hub")
   /// </summary>
   public string? Location { get; set; }
+
+  /// <summary>
+  /// Required when status is DELAYED (e.g., "Vehicle breakdown")
+  /// </summary>
+  public string? DelayReason { get; set; }
 }

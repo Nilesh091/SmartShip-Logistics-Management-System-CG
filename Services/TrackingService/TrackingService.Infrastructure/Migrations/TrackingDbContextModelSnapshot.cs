@@ -28,6 +28,10 @@ namespace TrackingService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("DelayReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
