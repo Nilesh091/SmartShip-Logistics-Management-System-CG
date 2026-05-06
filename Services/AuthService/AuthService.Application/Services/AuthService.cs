@@ -1,4 +1,5 @@
 using AuthService.Application.DTOs;
+using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Shared.Messaging;
@@ -43,7 +44,7 @@ namespace AuthService.Application.Services
         if (existingUser != null)
         {
           _logger.LogWarning($"Registration attempt with existing email: {dto.Email}");
-          throw new Exception("User with this email already exists");
+          throw new AuthServiceException("User with this email already exists");
         }
 
         // Step 1: Store temporary user data in CACHE (not in database)
@@ -101,7 +102,7 @@ namespace AuthService.Application.Services
         if (user == null || !_hasher.Verify(dto.Password, user.PasswordHash))
         {
           _logger.LogWarning($"Invalid credentials for email: {dto.Email}");
-          throw new Exception("Invalid credentials");
+          throw new AuthServiceException("Invalid credentials");
         }
 
         _logger.LogInformation($"Credentials verified for user: {dto.Email}");
@@ -156,7 +157,7 @@ namespace AuthService.Application.Services
           if (pendingUserData.Otp != dto.Otp)
           {
             _logger.LogWarning($"Invalid OTP for registration email: {dto.Email}");
-            throw new Exception("Invalid OTP");
+            throw new AuthServiceException("Invalid OTP");
           }
 
           _logger.LogInformation($"OTP verified successfully for registration email: {dto.Email}");
@@ -200,7 +201,7 @@ namespace AuthService.Application.Services
         if (otpRecord == null)
         {
           _logger.LogWarning($"No OTP found for login email: {dto.Email}");
-          throw new Exception("No OTP found. Please login first to receive OTP.");
+          throw new AuthServiceException("No OTP found. Please login first to receive OTP.");
         }
 
         // Check if OTP is expired
@@ -208,14 +209,14 @@ namespace AuthService.Application.Services
         {
           _logger.LogWarning($"OTP expired for email: {dto.Email}");
           await _otpRepository.DeleteAsync(otpRecord);
-          throw new Exception("OTP has expired. Please request a new OTP.");
+          throw new AuthServiceException("OTP has expired. Please request a new OTP.");
         }
 
         // Verify OTP code
         if (otpRecord.Code != dto.Otp)
         {
           _logger.LogWarning($"Invalid OTP code for login email: {dto.Email}");
-          throw new Exception("Invalid OTP");
+          throw new AuthServiceException("Invalid OTP");
         }
 
         _logger.LogInformation($"OTP verified successfully for login email: {dto.Email}");
@@ -225,7 +226,7 @@ namespace AuthService.Application.Services
         if (loginUser == null)
         {
           _logger.LogWarning($"User not found after OTP verification for email: {dto.Email}");
-          throw new Exception("User not found");
+          throw new AuthServiceException("User not found");
         }
 
         await _otpRepository.DeleteAsync(otpRecord);
@@ -262,7 +263,7 @@ namespace AuthService.Application.Services
         if (refreshToken == null || refreshToken.Expires < DateTime.UtcNow)
         {
           _logger.LogWarning("Invalid or expired refresh token");
-          throw new Exception("Invalid refresh token");
+          throw new AuthServiceException("Invalid refresh token");
         }
 
         _logger.LogDebug("Refresh token validated successfully");
@@ -332,7 +333,7 @@ namespace AuthService.Application.Services
         if (user == null)
         {
           _logger.LogWarning($"User not found with ID: {userId}");
-          throw new Exception("User not found");
+          throw new AuthServiceException("User not found");
         }
 
         user.Role = dto.Role;

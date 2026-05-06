@@ -200,6 +200,7 @@ public class ShipmentService : IShipmentService
             ShipmentId = shipment.Id,
             Status = shipment.Status,
             Location = location,
+            DelayReason = shipment.Status == ShipmentStatus.Delayed ? delayReason : null,
             UpdatedAt = DateTime.UtcNow
         });
         return await _repository.UpdateAsync(shipment);

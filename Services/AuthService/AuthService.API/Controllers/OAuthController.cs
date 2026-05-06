@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 
 namespace AuthService.API.Controllers
@@ -54,6 +55,11 @@ namespace AuthService.API.Controllers
                                   $"&refreshToken={Uri.EscapeDataString(result.RefreshToken!)}" +
                                   $"&role={Uri.EscapeDataString(result.Role!)}";
                 return Redirect(redirectUrl);
+            }
+            catch (GoogleOAuthException ex)
+            {
+                _logger.LogWarning(ex, "Google OAuth callback failed with a custom OAuth exception");
+                return Redirect($"{frontendBase}/login?oauth_error={Uri.EscapeDataString(ex.Message)}");
             }
             catch (Exception ex)
             {

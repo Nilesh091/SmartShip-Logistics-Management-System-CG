@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using AuthService.Application.DTOs;
+using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -103,7 +104,7 @@ namespace AuthService.Application.Services
 
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<GoogleTokenResponse>()
-                ?? throw new Exception("Failed to parse Google token response");
+                ?? throw new GoogleOAuthException("Failed to parse Google token response");
         }
 
         private async Task<GoogleUserInfo> GetUserInfoAsync(string accessToken)
@@ -116,7 +117,7 @@ namespace AuthService.Application.Services
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<GoogleUserInfo>()
-                ?? throw new Exception("Failed to parse Google user info");
+                ?? throw new GoogleOAuthException("Failed to parse Google user info");
         }
 
         private record GoogleTokenResponse(

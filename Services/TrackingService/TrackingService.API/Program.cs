@@ -12,6 +12,7 @@ using Shared.Logs;
 using Shared.Messaging;
 using TrackingService.Application.EventHandlers;
 using DotNetEnv;
+using TrackingService.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +112,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

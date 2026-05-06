@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Logs;
 using Shared.Messaging;
 using DotNetEnv;
+using AuthService.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +82,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

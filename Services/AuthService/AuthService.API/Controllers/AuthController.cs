@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AuthService.Application.DTOs;
+using AuthService.Application.Exceptions;
 using AuthService.Application.Interfaces;
 
 namespace AuthService.API.Controllers
@@ -28,6 +29,11 @@ namespace AuthService.API.Controllers
         _logger.LogInformation($"User registered successfully: {dto.Email}");
         return Ok(result);
       }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogWarning(ex, $"Registration failed for email {dto.Email}: {ex.Message}");
+        return BadRequest(new { message = ex.Message });
+      }
       catch (Exception ex)
       {
         _logger.LogError(ex, $"Registration error for email {dto.Email}: {ex.Message}");
@@ -44,6 +50,11 @@ namespace AuthService.API.Controllers
         var result = await _authService.Login(dto);
         _logger.LogInformation($"Login successful for email: {dto.Email}");
         return Ok(result);
+      }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogWarning(ex, $"Login failed for email {dto.Email}: {ex.Message}");
+        return Unauthorized(new { message = ex.Message });
       }
       catch (Exception ex)
       {
@@ -62,6 +73,11 @@ namespace AuthService.API.Controllers
         _logger.LogInformation($"OTP verified successfully for email: {dto.Email}");
         return Ok(new { success = true, message = "OTP verified successfully", data = result });
       }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogWarning(ex, $"OTP verification failed for email {dto.Email}: {ex.Message}");
+        return Unauthorized(new { message = ex.Message });
+      }
       catch (Exception ex)
       {
         _logger.LogWarning($"OTP verification failed for email {dto.Email}: {ex.Message}");
@@ -79,6 +95,11 @@ namespace AuthService.API.Controllers
         _logger.LogDebug("Token refreshed successfully");
         return Ok(result);
       }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogWarning(ex, $"Token refresh failed: {ex.Message}");
+        return Unauthorized(new { message = ex.Message });
+      }
       catch (Exception ex)
       {
         _logger.LogWarning($"Token refresh failed: {ex.Message}");
@@ -95,6 +116,11 @@ namespace AuthService.API.Controllers
         var result = await _authService.RevokeToken(token);
         _logger.LogInformation($"Token revoked successfully: {result}");
         return Ok(new { success = result });
+      }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogError(ex, $"Token revocation error: {ex.Message}");
+        return BadRequest(new { message = ex.Message });
       }
       catch (Exception ex)
       {
@@ -114,6 +140,11 @@ namespace AuthService.API.Controllers
         _logger.LogInformation($"Retrieved {users.Count} users");
         return Ok(new { success = true, message = "Users retrieved successfully", data = users });
       }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogError(ex, $"Error retrieving users: {ex.Message}");
+        return BadRequest(new { message = ex.Message });
+      }
       catch (Exception ex)
       {
         _logger.LogError(ex, $"Error retrieving users: {ex.Message}");
@@ -131,6 +162,11 @@ namespace AuthService.API.Controllers
         var result = await _authService.UpdateUserRoleAsync(userId, dto);
         _logger.LogInformation($"User role updated successfully for userId: {userId}");
         return Ok(new { success = true, message = "User role updated successfully", data = result });
+      }
+      catch (AuthServiceException ex)
+      {
+        _logger.LogError(ex, $"Error updating user role for userId {userId}: {ex.Message}");
+        return BadRequest(new { message = ex.Message });
       }
       catch (Exception ex)
       {

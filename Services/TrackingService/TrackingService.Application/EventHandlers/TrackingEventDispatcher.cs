@@ -43,6 +43,7 @@ namespace TrackingService.Application.EventHandlers
                         ShipmentId = evt.ShipmentId,
                         Status = evt.Status,
                         Location = evt.Location,
+                        DelayReason = evt.DelayReason,
                         Timestamp = evt.UpdatedAt
                     });
                 }

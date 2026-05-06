@@ -14,6 +14,7 @@ using System.Net.Http.Headers;
 using Shared.Messaging;
 using Shared.Logs;
 using DotNetEnv;
+using ShipmentService.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -180,6 +181,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
