@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipmentService.Domain", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipmentService.Infrastructure", "ShipmentService.Infrastructure\ShipmentService.Infrastructure.csproj", "{227EADBF-7CD2-4A02-8338-79814A8B1593}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShipmentService.Tests", "ShipmentService.Tests\ShipmentService.Tests.csproj", "{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{227EADBF-7CD2-4A02-8338-79814A8B1593}.Release|x64.Build.0 = Release|Any CPU
 		{227EADBF-7CD2-4A02-8338-79814A8B1593}.Release|x86.ActiveCfg = Release|Any CPU
 		{227EADBF-7CD2-4A02-8338-79814A8B1593}.Release|x86.Build.0 = Release|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Debug|x64.Build.0 = Debug|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Debug|x86.Build.0 = Debug|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Release|x64.ActiveCfg = Release|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Release|x64.Build.0 = Release|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Release|x86.ActiveCfg = Release|Any CPU
+		{20D73315-A7B4-4B76-BC46-6EC3924B1ABC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

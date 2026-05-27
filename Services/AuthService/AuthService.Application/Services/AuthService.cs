@@ -50,7 +50,7 @@ namespace AuthService.Application.Services
         // Step 1: Store temporary user data in CACHE (not in database)
         var otp = new Random().Next(100000, 999999).ToString();
 
-        var pendingUserData = new
+        var pendingUserData = new PendingUserData
         {
           Name = dto.Name,
           Email = dto.Email,
@@ -149,7 +149,7 @@ namespace AuthService.Application.Services
 
         // SCENARIO 1: REGISTRATION FLOW - Check pending user data in CACHE
         var cacheKey = string.Format(PENDING_USER_CACHE_KEY, dto.Email);
-        if (_cache.TryGetValue(cacheKey, out dynamic pendingUserData))
+        if (_cache.TryGetValue(cacheKey, out PendingUserData? pendingUserData) && pendingUserData != null)
         {
           _logger.LogInformation($"Registration flow detected for email: {dto.Email}");
 

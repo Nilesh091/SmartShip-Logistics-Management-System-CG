@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackingService.Domain", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackingService.Infrastructure", "TrackingService.Infrastructure\TrackingService.Infrastructure.csproj", "{670143BA-3993-4F3D-840E-FA942ABDF134}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackingService.Tests", "TrackingService.Tests\TrackingService.Tests.csproj", "{00DF5228-FE39-4039-9A84-1614676C7889}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{670143BA-3993-4F3D-840E-FA942ABDF134}.Release|x64.Build.0 = Release|Any CPU
 		{670143BA-3993-4F3D-840E-FA942ABDF134}.Release|x86.ActiveCfg = Release|Any CPU
 		{670143BA-3993-4F3D-840E-FA942ABDF134}.Release|x86.Build.0 = Release|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Debug|x64.Build.0 = Debug|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Debug|x86.Build.0 = Debug|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Release|x64.ActiveCfg = Release|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Release|x64.Build.0 = Release|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Release|x86.ActiveCfg = Release|Any CPU
+		{00DF5228-FE39-4039-9A84-1614676C7889}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
